@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Someone Trust Worthy</title>
+  <link rel="stylesheet" href="auth.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+    <link rel="icon" type="image/png" href="auth/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+</head>
+<link rel="stylesheet" href="styles/page-transition.css" />
+<script src="scripts/page-transition.js"></script>
+<body>
+  <div class="auth-container">
+    <p class="auth-text">
+      Hey? The given website are only for trusted user's<br />
+      Prove you are that trustworthy!
+    </p>
+    <input
+      type="password"
+      maxlength="4"
+      inputmode="numeric"
+      id="passcode"
+      placeholder="••••"
+    />
+
+    <button id="verifyBtn">Enter</button>
+    <button id="backBtn">Go back</button>
+
+    <p id="message"></p>
+  </div>
+<script src="auth.js"></script>
+<script>
+  backBtn.addEventListener("click", () => {
+    window.history.back();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Someone Trustworthy</title>
+  <meta name="description" content="Secure access gate — only for trusted users.">
+  <link rel="icon" type="image/png" href="icon.png">
+
+  <!-- Fonts: Etheric Void Design System -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+
+  <!-- Ambient Background Orbs -->
+  <div class="ambient-bg">
+    <div class="orb orb-violet"></div>
+    <div class="orb orb-cyan"></div>
+  </div>
+
+  <!-- Auth Card -->
+  <div class="auth-container" id="authContainer">
+
+    <!-- Lock Icon -->
+    <div class="lock-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        <circle cx="12" cy="16" r="1"/>
+      </svg>
+    </div>
+
+    <!-- Label -->
+    <p class="auth-label">RESTRICTED ACCESS</p>
+
+    <!-- Title -->
+    <h1 class="auth-title">For Someone <span class="gradient-text">Trustworthy</span></h1>
+
+    <!-- Subtitle -->
+    <p class="auth-subtitle">
+      This website is only for trusted users.<br />
+      Prove you are that trustworthy!
+    </p>
+
+    <!-- Passcode Input -->
+    <div class="input-wrapper" id="inputWrapper">
+      <input
+        type="password"
+        maxlength="4"
+        inputmode="numeric"
+        id="passcode"
+        placeholder="• • • •"
+        autocomplete="off"
+      />
+      <div class="input-glow"></div>
+    </div>
+
+    <!-- Buttons -->
+    <button id="verifyBtn" class="btn-primary">
+      <span>Enter</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+
+    <button id="backBtn" class="btn-ghost">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      <span>Go Back</span>
+    </button>
+
+    <!-- Message -->
+    <p id="message" class="status-message"></p>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    document.getElementById('backBtn').addEventListener('click', () => {
+      window.history.back();
+    });
+  </script>
+</body>
+</html>

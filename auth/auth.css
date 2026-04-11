@@ -1,0 +1,447 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUTH PAGE — Etheric Void Design System (Stitch MCP)
+   Creative North Star: "The Ethereal Architect"
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ── */
+:root {
+  --bg:                        #0A0A0F;
+  --surface:                   #131318;
+  --surface-container-lowest:  #0e0e13;
+  --surface-container-low:     #1b1b20;
+  --surface-container:         #1f1f25;
+  --surface-container-high:    #2a292f;
+  --surface-container-highest: #35343a;
+
+  --primary:             #d0bcff;
+  --primary-container:   #a078ff;
+  --primary-dim:         #8B5CF6;
+  --secondary:           #4cd7f6;
+  --secondary-container: #03b5d3;
+  --tertiary:            #ccbeff;
+
+  --on-surface:          #e4e1e9;
+  --on-surface-variant:  #cbc3d7;
+  --outline:             #958ea0;
+  --outline-variant:     #494454;
+
+  --error:               #ff6e84;
+
+  --font-headline: 'Space Grotesk', sans-serif;
+  --font-body:     'Inter', sans-serif;
+
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--on-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════ AMBIENT BACKGROUND ═══════════════ */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.18;
+  animation: orbFloat 20s ease-in-out infinite;
+}
+
+.orb-violet {
+  width: 500px;
+  height: 500px;
+  background: var(--primary-dim);
+  top: -80px;
+  right: -120px;
+  animation-delay: 0s;
+}
+
+.orb-cyan {
+  width: 400px;
+  height: 400px;
+  background: var(--secondary-container);
+  bottom: -60px;
+  left: -100px;
+  animation-delay: -10s;
+  animation-duration: 25s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%      { transform: translate(30px, -40px) scale(1.08); }
+  50%      { transform: translate(-20px, 30px) scale(0.95); }
+  75%      { transform: translate(40px, 10px) scale(1.03); }
+}
+
+/* ═══════════════ AUTH CONTAINER (Glass Card) ═══════════════ */
+.auth-container {
+  position: relative;
+  z-index: 1;
+  width: 90%;
+  max-width: 420px;
+  padding: 48px 40px 40px;
+  text-align: center;
+
+  /* Glassmorphism */
+  background: rgba(31, 31, 37, 0.5);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-xl);
+
+  /* Ghost Border */
+  box-shadow: inset 0 0 0 1px rgba(73, 68, 84, 0.15);
+
+  /* Ambient shadow */
+  filter: drop-shadow(0 32px 64px rgba(139, 92, 246, 0.06));
+
+  /* Entrance animation */
+  animation: cardEntrance 0.8s var(--ease-out-expo) both;
+}
+
+.auth-container.exit {
+  animation: cardExit 0.5s var(--ease-out-expo) forwards;
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardExit {
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    filter: blur(8px);
+  }
+}
+
+/* ═══════════════ LOCK ICON ═══════════════ */
+.lock-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: rgba(160, 120, 255, 0.08);
+  color: var(--primary);
+  margin-bottom: 24px;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(160, 120, 255, 0.15); }
+  50%      { box-shadow: 0 0 0 12px rgba(160, 120, 255, 0); }
+}
+
+/* ═══════════════ TYPOGRAPHY ═══════════════ */
+.auth-label {
+  font-family: var(--font-headline);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--outline);
+  margin-bottom: 16px;
+}
+
+.auth-title {
+  font-family: var(--font-headline);
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-container), var(--secondary-container));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: var(--on-surface-variant);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+/* ═══════════════ PASSCODE INPUT ═══════════════ */
+.input-wrapper {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+#passcode {
+  width: 100%;
+  padding: 16px 20px;
+  font-family: var(--font-headline);
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.7rem;
+  border: none;
+  border-radius: var(--radius-md);
+  outline: none;
+  color: var(--on-surface);
+
+  /* Tonal layering */
+  background: var(--surface-container-lowest);
+
+  /* Ghost border */
+  box-shadow: inset 0 0 0 1px rgba(73, 68, 84, 0.15);
+  transition: box-shadow 0.4s var(--ease-out-expo),
+              background 0.4s var(--ease-out-expo);
+}
+
+#passcode::placeholder {
+  color: var(--outline-variant);
+  letter-spacing: 0.6rem;
+  font-size: 1.2rem;
+}
+
+#passcode:focus {
+  background: var(--surface-container-high);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(160, 120, 255, 0.35),
+    0 0 24px rgba(139, 92, 246, 0.08);
+}
+
+/* Input bottom glow line */
+.input-glow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-container), var(--secondary-container));
+  border-radius: 2px;
+  transition: width 0.5s var(--ease-out-expo);
+}
+
+#passcode:focus ~ .input-glow {
+  width: 60%;
+}
+
+/* Success state */
+#passcode.correct {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(76, 215, 246, 0.4),
+    0 0 32px rgba(76, 215, 246, 0.12);
+}
+
+#passcode.correct ~ .input-glow {
+  width: 100%;
+  background: linear-gradient(90deg, var(--secondary-container), var(--secondary));
+}
+
+/* Error shake */
+#passcode.shake {
+  animation: shake 0.45s ease;
+}
+
+#passcode.error-flash {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 110, 132, 0.4),
+    0 0 20px rgba(255, 110, 132, 0.1);
+}
+
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-8px); }
+  40%  { transform: translateX(8px); }
+  60%  { transform: translateX(-5px); }
+  80%  { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+/* ═══════════════ BUTTONS ═══════════════ */
+
+/* Primary — Gradient CTA */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  margin-top: 20px;
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-headline);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--primary-container), var(--secondary-container));
+  transition: transform 0.3s var(--ease-out-expo),
+              box-shadow 0.3s var(--ease-out-expo),
+              filter 0.3s var(--ease-out-expo);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.25);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.btn-primary svg {
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.btn-primary:hover svg {
+  transform: translateX(3px);
+}
+
+/* Ghost — Back button */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 24px;
+  margin-top: 10px;
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-headline);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  background: transparent;
+  transition: color 0.3s var(--ease-out-expo),
+              background 0.3s var(--ease-out-expo);
+}
+
+.btn-ghost:hover {
+  color: var(--on-surface);
+  background: rgba(208, 188, 255, 0.06);
+}
+
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--outline-variant);
+  outline-offset: 2px;
+}
+
+.btn-ghost svg {
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.btn-ghost:hover svg {
+  transform: translateX(-3px);
+}
+
+/* ═══════════════ STATUS MESSAGE ═══════════════ */
+.status-message {
+  margin-top: 16px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--on-surface-variant);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-out-expo),
+              transform 0.5s var(--ease-out-expo),
+              color 0.3s ease;
+}
+
+.status-message.success {
+  opacity: 1;
+  transform: translateY(0);
+  color: var(--secondary);
+}
+
+.status-message.error {
+  opacity: 1;
+  transform: translateY(0);
+  color: var(--error);
+}
+
+/* ═══════════════ RESPONSIVE ═══════════════ */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 40px 24px 32px;
+    border-radius: var(--radius-lg);
+  }
+
+  .auth-title {
+    font-size: 1.4rem;
+  }
+
+  #passcode {
+    font-size: 1.3rem;
+    padding: 14px 16px;
+  }
+
+  .lock-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .lock-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* ═══════════════ ACCESSIBILITY ═══════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .orb {
+    animation: none;
+  }
+}

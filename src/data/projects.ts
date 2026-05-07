@@ -42,7 +42,7 @@ export const projects: Project[] = [
     title: 'Bestfriend\'s Birthday',
     description: 'An authentic, handcrafted birthday celebration website for my bestfriend.',
     tags: ['Creative', 'Personal'],
-    link: 'auth/auth.html',
+    link: '/auth/auth.html',
     color: '#f43f5e' // Rose
   },
   {

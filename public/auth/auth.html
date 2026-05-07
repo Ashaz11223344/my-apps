@@ -46,26 +46,30 @@
       Prove you are that trustworthy!
     </p>
 
-    <!-- Passcode Input -->
-    <div class="input-wrapper" id="inputWrapper">
-      <input
-        type="password"
-        maxlength="4"
-        inputmode="numeric"
-        id="passcode"
-        placeholder="• • • •"
-        autocomplete="off"
-      />
-      <div class="input-glow"></div>
-    </div>
+    <!-- Passcode Form -->
+    <form id="authForm" style="width: 100%;">
+      <!-- Passcode Input -->
+      <div class="input-wrapper" id="inputWrapper">
+        <input
+          type="password"
+          maxlength="4"
+          inputmode="numeric"
+          id="passcode"
+          placeholder="• • • •"
+          autocomplete="off"
+          required
+        />
+        <div class="input-glow"></div>
+      </div>
 
-    <!-- Buttons -->
-    <button id="verifyBtn" class="btn-primary">
-      <span>Enter</span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M5 12h14M12 5l7 7-7 7"/>
-      </svg>
-    </button>
+      <!-- Buttons -->
+      <button type="submit" id="verifyBtn" class="btn-primary">
+        <span>Enter</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
 
     <button id="backBtn" class="btn-ghost">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

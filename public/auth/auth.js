@@ -36,11 +36,11 @@ function verify() {
 
     setTimeout(() => {
       container.classList.add("exit");
-    }, 900);
+    }, 350);
 
     setTimeout(() => {
-      window.location.href = "https://tomylovesmiti.qzz.io";
-    }, 1400);
+      window.location.replace("https://tomylovesmiti.qzz.io");
+    }, 850);
   } else {
     // Error
     input.classList.add("shake");

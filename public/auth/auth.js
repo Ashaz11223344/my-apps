@@ -16,7 +16,14 @@ input.addEventListener("keyup", (e) => {
 });
 
 function verify() {
-  if (input.value === PASSCODE) {
+  // Reset previous error styles and ensure message is visible
+  message.style.opacity = "1";
+  input.classList.remove("shake", "error-flash", "correct");
+  message.classList.remove("success", "error");
+
+  const enteredValue = input.value.trim();
+
+  if (enteredValue === PASSCODE) {
     // Success
     input.classList.add("correct");
 
@@ -40,7 +47,6 @@ function verify() {
     input.classList.add("error-flash");
 
     message.textContent = "Access denied — wrong passcode";
-    message.classList.remove("success");
     message.classList.add("error");
 
     setTimeout(() => {
@@ -58,3 +64,4 @@ function verify() {
     }, 800);
   }
 }
+

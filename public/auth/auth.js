@@ -10,16 +10,45 @@ const button = document.getElementById("verifyBtn");
 const message = document.getElementById("message");
 const container = document.getElementById("authContainer");
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  verify();
-});
+// 1. SAFELY ADD SUBMIT LISTENER (NEW HTML FORM APPROACH)
+if (form) {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    verify();
+  });
+}
+
+// 2. BACKWARD COMPATIBILITY: CLICK LISTENER (OLD HTML OR FORM FALLBACK)
+if (button) {
+  button.addEventListener("click", (e) => {
+    if (!form) {
+      e.preventDefault();
+      verify();
+    }
+  });
+}
+
+// 3. BACKWARD COMPATIBILITY: ENTER KEY LISTENER
+if (input) {
+  input.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+      if (!form) {
+        e.preventDefault();
+        verify();
+      }
+    }
+  });
+}
 
 function verify() {
+  if (!input) return;
+
   // Reset previous error styles and ensure message is visible
-  message.style.opacity = "1";
+  if (message) {
+    message.style.opacity = "1";
+    message.classList.remove("success", "error");
+  }
   input.classList.remove("shake", "error-flash", "correct");
-  message.classList.remove("success", "error");
 
   const enteredValue = input.value.trim();
 
@@ -27,22 +56,30 @@ function verify() {
     // Success
     input.classList.add("correct");
 
-    message.textContent = "Welcome — You are Trusted by Ashaz ✨";
-    message.classList.add("success");
+    if (message) {
+      message.textContent = "Welcome — You are Trusted by Ashaz ✨";
+      message.classList.add("success");
+    }
 
-    // Disable input
+    // Disable input and button
     input.disabled = true;
-    button.disabled = true;
+    if (button) button.disabled = true;
 
-    // Instant redirect to guarantee webview / in-app browser compliance (zero setTimeout)
-    window.location.href = "https://tomylovesmiti.qzz.io";
+    // Instant redirect to guarantee compatibility on all desktop and mobile browsers
+    try {
+      window.location.replace("https://tomylovesmiti.qzz.io");
+    } catch (err) {
+      window.location.href = "https://tomylovesmiti.qzz.io";
+    }
   } else {
     // Error
     input.classList.add("shake");
     input.classList.add("error-flash");
 
-    message.textContent = "Access denied — wrong passcode";
-    message.classList.add("error");
+    if (message) {
+      message.textContent = "Access denied — wrong passcode";
+      message.classList.add("error");
+    }
 
     setTimeout(() => {
       input.classList.remove("shake");
@@ -50,11 +87,17 @@ function verify() {
 
     setTimeout(() => {
       input.classList.remove("error-flash");
-      message.classList.remove("error");
-      message.style.opacity = "0";
+      if (message) {
+        message.classList.remove("error");
+        message.style.opacity = "0";
+      }
     }, 600);
 
-    // Instant redirect to avoid webview block
-    window.location.href = FAIL_REDIRECT;
+    // Short delayed fallback for failure, ensuring synchronous fallback if needed
+    try {
+      window.location.replace(FAIL_REDIRECT);
+    } catch (err) {
+      window.location.href = FAIL_REDIRECT;
+    }
   }
 }

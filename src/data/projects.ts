@@ -21,10 +21,10 @@ export const projects: Project[] = [
   {
     id: 'project-attendance',
     number: '02',
-    title: 'Student Attendance System',
+    title: 'Attendify',
     description: 'Easy student attendance tracking powered by facial recognition technology.',
     tags: ['AI', 'Education'],
-    link: 'https://www.attendify.co.in/com',
+    link: 'https://attendify-attendance-identity.vercel.app/',
     color: '#3b82f6' // Blue
   },
   {
@@ -42,7 +42,7 @@ export const projects: Project[] = [
     title: 'Bestfriend\'s Birthday',
     description: 'An authentic, handcrafted birthday celebration website for my bestfriend.',
     tags: ['Creative', 'Personal'],
-    link: '/auth/auth.html',
+    link: 'https://ashazapps.qzz.io/auth/auth.html',
     color: '#f43f5e' // Rose
   },
   {
@@ -78,7 +78,7 @@ export const projects: Project[] = [
     title: 'Lumina Spaces',
     description: 'Get personalized architectural designs for your spaces.',
     tags: ['Architect', 'Design'],
-    link: 'https://luminaspaces.qzz.io',
-    color: '#21732c' // Warm Amber/Gold
+    link: 'https://luminaspaces.qzz.io/',
+    color: '#21732c' // Green
   }
 ];

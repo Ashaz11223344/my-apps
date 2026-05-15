@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useMotionTemplate, AnimatePresence } from 'framer-motion';
 import { projects, type Project } from '../../data/projects';
-import { ArrowUpRight, X, ExternalLink, Maximize2, Monitor } from 'lucide-react';
+import { X, ExternalLink, Maximize2, Monitor } from 'lucide-react';
 
 export default function ProjectGallery() {
   const containerRef = useRef<HTMLDivElement>(null);

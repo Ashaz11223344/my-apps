@@ -43,7 +43,7 @@ export default function Resume() {
           Back to Portfolio
         </Link>
         <div className="font-space font-bold text-xl tracking-tighter">
-          <span className="gradient-text">AP</span>
+          <span className="gradient-text uppercase">Ashaz Pathan</span>
         </div>
         <a 
           href="/resume.pdf" 
@@ -65,7 +65,11 @@ export default function Resume() {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-8">
             {/* Profile Info */}
-            <motion.div variants={itemVariants} className="glass-card p-8 rounded-3xl border border-white/5">
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ rotateX: -5, rotateY: 5, z: 50 }}
+              className="glass-card p-8 rounded-3xl border border-white/5 transform-gpu transition-all duration-300"
+            >
               <h1 className="text-3xl font-space font-bold mb-2">Ashaz Pathan</h1>
               <p className="text-blue-400 font-medium mb-6">Computer Engineering Student</p>
               
@@ -98,7 +102,11 @@ export default function Resume() {
             </motion.div>
 
             {/* Education */}
-            <motion.div variants={itemVariants} className="glass-card p-8 rounded-3xl border border-white/5">
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ rotateX: -5, rotateY: 5, z: 50 }}
+              className="glass-card p-8 rounded-3xl border border-white/5 transform-gpu transition-all duration-300"
+            >
               <div className="flex items-center gap-2 mb-6">
                 <GraduationCap className="w-5 h-5 text-blue-400" />
                 <h2 className="text-xl font-space font-bold">Education</h2>
@@ -118,7 +126,11 @@ export default function Resume() {
             </motion.div>
 
             {/* Skills */}
-            <motion.div variants={itemVariants} className="glass-card p-8 rounded-3xl border border-white/5">
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ rotateX: -5, rotateY: 5, z: 50 }}
+              className="glass-card p-8 rounded-3xl border border-white/5 transform-gpu transition-all duration-300"
+            >
               <div className="flex items-center gap-2 mb-6">
                 <Code2 className="w-5 h-5 text-blue-400" />
                 <h2 className="text-xl font-space font-bold">Technical Skills</h2>
@@ -136,7 +148,11 @@ export default function Resume() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Summary */}
-            <motion.div variants={itemVariants} className="glass-card p-8 rounded-3xl border border-white/5">
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ rotateX: 5, rotateY: -5, z: 50 }}
+              className="glass-card p-8 rounded-3xl border border-white/5 transform-gpu transition-all duration-300"
+            >
               <h2 className="text-xl font-space font-bold mb-4 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-blue-400" />
                 Professional Summary
@@ -150,7 +166,11 @@ export default function Resume() {
             </motion.div>
 
             {/* Experience/Internship */}
-            <motion.div variants={itemVariants} className="glass-card p-8 rounded-3xl border border-white/5">
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ rotateX: 5, rotateY: -5, z: 50 }}
+              className="glass-card p-8 rounded-3xl border border-white/5 transform-gpu transition-all duration-300"
+            >
               <h2 className="text-xl font-space font-bold mb-6 flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-blue-400" />
                 Internship
@@ -171,7 +191,11 @@ export default function Resume() {
             </motion.div>
 
             {/* Projects */}
-            <motion.div variants={itemVariants} className="glass-card p-8 rounded-3xl border border-white/5">
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ rotateX: 5, rotateY: -5, z: 50 }}
+              className="glass-card p-8 rounded-3xl border border-white/5 transform-gpu transition-all duration-300"
+            >
               <h2 className="text-xl font-space font-bold mb-6 flex items-center gap-2">
                 <ExternalLink className="w-5 h-5 text-blue-400" />
                 Featured Projects
@@ -207,7 +231,11 @@ export default function Resume() {
             </motion.div>
 
             {/* Achievements */}
-            <motion.div variants={itemVariants} className="glass-card p-8 rounded-3xl border border-white/5">
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ rotateX: 5, rotateY: -5, z: 50 }}
+              className="glass-card p-8 rounded-3xl border border-white/5 transform-gpu transition-all duration-300"
+            >
               <h2 className="text-xl font-space font-bold mb-6 flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-blue-400" />
                 Achievements

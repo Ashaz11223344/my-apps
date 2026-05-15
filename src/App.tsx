@@ -55,7 +55,7 @@ function AppContent() {
             <div className="relative z-10">
               <nav className="fixed top-0 w-full z-50 glass px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center mix-blend-difference">
                 <div className="font-space font-bold text-lg sm:text-xl tracking-tighter">
-                  <span className="gradient-text">AP</span>
+                  <span className="gradient-text uppercase">Ashaz Pathan</span>
                 </div>
                 <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm font-medium tracking-wide items-center">
                   <a href="#hero" className="hover:text-white/70 transition-colors">Home</a>

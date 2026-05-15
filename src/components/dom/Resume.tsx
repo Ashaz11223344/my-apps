@@ -241,6 +241,20 @@ export default function Resume() {
                 Achievements
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* MAHA-VEER 2026 — Featured 1st Place */}
+                <div className="md:col-span-2 p-5 rounded-2xl bg-gradient-to-br from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/30 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-400/5 rounded-full blur-3xl" />
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="w-5 h-5 text-yellow-400" />
+                      <h4 className="font-bold text-base text-white">MAHA-VEER 2026</h4>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 font-bold uppercase tracking-wider">🏆 1st Place</span>
+                  </div>
+                  <p className="text-sm text-white/70 mb-1">National Level Technical Event • Mahavir Polytechnic, Nashik</p>
+                  <p className="text-xs text-white/50">Won first place and trophy with the project <span className="text-blue-400 font-medium">Lumina Spaces – AI Interior Redesign System</span>, competing at the national level against teams from across the country.</p>
+                </div>
+
                 {[
                   { title: "JIT Project Competition", role: "Participation", detail: "Demonstrated practical application of programming and problem-solving skills." },
                   { title: "IIT Bombay Cozmo Clench", role: "Participation", detail: "Competed in a national level technical competition, gaining exposure to advanced technology." },

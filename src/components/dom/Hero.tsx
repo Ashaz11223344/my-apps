@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <section id="hero" className="min-h-screen flex flex-col justify-center px-6 md:px-24 relative pt-20">
       <div className="max-w-4xl z-10 pointer-events-auto">
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -13,8 +13,8 @@ export default function Hero() {
         >
           Developer Portfolio
         </motion.p>
-        
-        <motion.h1 
+
+        <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, type: "spring", stiffness: 50 }}
@@ -24,16 +24,16 @@ export default function Hero() {
           Experiences
         </motion.h1>
 
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-base sm:text-lg md:text-2xl text-gray-400 font-inter max-w-2xl mb-12"
         >
-          All my work at one place — blending high-end 3D interactions with seamless web performance.
+          All my work at one place.
         </motion.p>
 
-        <motion.a 
+        <motion.a
           href="#projects"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -44,23 +44,23 @@ export default function Hero() {
           <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
         </motion.a>
       </div>
-      
+
       {/* Scroll indicator absolute positioned */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 1 }}
         className="absolute bottom-8 left-6 md:left-24 flex items-center gap-4 text-xs text-white/50 uppercase tracking-[0.25em] font-space"
       >
         <div className="w-[1px] h-12 bg-white/10 relative overflow-hidden">
-          <motion.div 
-            animate={{ 
-              y: ["-100%", "100%"] 
+          <motion.div
+            animate={{
+              y: ["-100%", "100%"]
             }}
-            transition={{ 
-              duration: 2, 
-              repeat: Infinity, 
-              ease: "easeInOut" 
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
             }}
             className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent via-[#a078ff] to-transparent"
           />

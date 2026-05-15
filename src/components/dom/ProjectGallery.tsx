@@ -344,9 +344,6 @@ function ExpandedProjectModal({ project, onClose }: { project: Project; onClose:
 
           {/* Right: Actions */}
           <div className="flex items-center gap-3">
-            <span className="hidden md:flex items-center gap-1.5 text-white/30 text-xs px-2 py-1 rounded-md border border-white/5 bg-white/5">
-              <span className="text-white/50 font-medium">ESC</span> to close
-            </span>
             <a
               href={project.link}
               target="_blank"
@@ -359,9 +356,10 @@ function ExpandedProjectModal({ project, onClose }: { project: Project; onClose:
             </a>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all duration-200 sm:hidden"
+              className="w-9 h-9 rounded-lg bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/40 flex items-center justify-center transition-all duration-200 group"
+              title="Close preview"
             >
-              <X className="w-4 h-4 text-white/60" />
+              <X className="w-4 h-4 text-white/50 group-hover:text-red-400 transition-colors" />
             </button>
           </div>
         </div>

@@ -2,13 +2,15 @@ import { Suspense, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Preload } from '@react-three/drei';
 import { AnimatePresence } from 'framer-motion';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Scene from './components/canvas/Scene';
 import Hero from './components/dom/Hero';
 import ProjectGallery from './components/dom/ProjectGallery';
 import Contact from './components/dom/Contact';
 import PageLoader from './components/dom/PageLoader';
+import Resume from './components/dom/Resume';
 
-function App() {
+function AppContent() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showLoader, setShowLoader] = useState(true);
 
@@ -48,26 +50,45 @@ function App() {
         </div>
 
         {/* HTML DOM Overlay */}
-        <div className="relative z-10">
-          <nav className="fixed top-0 w-full z-50 glass px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center mix-blend-difference">
-            <div className="font-space font-bold text-lg sm:text-xl tracking-tighter">
-              <span className="gradient-text">AP</span>
-            </div>
-            <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm font-medium tracking-wide">
-              <a href="#hero" className="hover:text-white/70 transition-colors">Home</a>
-              <a href="#projects" className="hover:text-white/70 transition-colors">Projects</a>
-              <a href="#contact" className="hover:text-white/70 transition-colors">Contact</a>
-            </div>
-          </nav>
+        <Routes>
+          <Route path="/" element={
+            <div className="relative z-10">
+              <nav className="fixed top-0 w-full z-50 glass px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center mix-blend-difference">
+                <div className="font-space font-bold text-lg sm:text-xl tracking-tighter">
+                  <span className="gradient-text">AP</span>
+                </div>
+                <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm font-medium tracking-wide items-center">
+                  <a href="#hero" className="hover:text-white/70 transition-colors">Home</a>
+                  <a href="#projects" className="hover:text-white/70 transition-colors">Projects</a>
+                  <a href="#contact" className="hover:text-white/70 transition-colors">Contact</a>
+                  <Link 
+                    to="/myresume" 
+                    className="bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/80 transition-all font-bold tracking-tighter"
+                  >
+                    RESUME
+                  </Link>
+                </div>
+              </nav>
 
-          <main>
-            <Hero />
-            <ProjectGallery />
-            <Contact />
-          </main>
-        </div>
+              <main>
+                <Hero />
+                <ProjectGallery />
+                <Contact />
+              </main>
+            </div>
+          } />
+          <Route path="/myresume" element={<Resume />} />
+        </Routes>
       </div>
     </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 

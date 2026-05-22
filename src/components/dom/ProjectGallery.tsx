@@ -73,7 +73,15 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
   const [isMobile, setIsMobile] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [hasBeenHovered, setHasBeenHovered] = useState(false);
   const [iframeScale, setIframeScale] = useState(0.35);
+
+  // Mark as hovered once so we keep the iframe loaded
+  useEffect(() => {
+    if (isHovered) {
+      setHasBeenHovered(true);
+    }
+  }, [isHovered]);
 
   // Dynamically calculate iframe scale based on container size
   useEffect(() => {
@@ -165,8 +173,40 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
 
           {/* Iframe Container */}
           <div ref={iframeContainerRef} className="relative w-full h-[calc(100%-2rem)] overflow-hidden">
-            {/* Loading skeleton */}
-            {!iframeLoaded && (
+            {/* Elegant Tech Placeholder before first hover */}
+            {!hasBeenHovered && (
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#0d0d12] p-6 text-center">
+                <div 
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${project.color}15, ${project.color}30)`,
+                    border: `1px solid ${project.color}40`,
+                    boxShadow: `0 0 20px ${project.color}15`
+                  }}
+                >
+                  <span className="text-2xl font-bold font-space" style={{ color: project.color }}>
+                    {project.title.charAt(0)}
+                  </span>
+                </div>
+                <h4 className="text-white/80 font-space font-medium text-sm mb-1">{project.title}</h4>
+                <p className="text-white/40 text-[11px] mb-4 font-mono truncate max-w-[220px]">
+                  {project.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                </p>
+                <div 
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-white/60 text-[10px] uppercase tracking-wider font-space transition-colors duration-300 group-hover:text-white"
+                  style={{ 
+                    borderColor: `${project.color}40`,
+                    background: `${project.color}08`
+                  }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: project.color }} />
+                  Hover to load preview
+                </div>
+              </div>
+            )}
+
+            {/* Loading skeleton while loading */}
+            {hasBeenHovered && !iframeLoaded && (
               <div className="absolute inset-0 z-20 flex items-center justify-center">
                 <div className="absolute inset-0 bg-[#0c0c10]" />
                 <div className="relative flex flex-col items-center gap-3">
@@ -179,28 +219,31 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
               </div>
             )}
 
-            {/* The actual iframe — dynamically scaled to fill the container */}
-            <iframe
-              src={project.link}
-              title={`${project.title} preview`}
-              className="absolute top-0 left-0 border-none"
-              style={{
-                width: '1440px',
-                height: `${iframeVirtualHeight}px`,
-                transform: `scale(${iframeScale})`,
-                transformOrigin: 'top left',
-                pointerEvents: 'none',
-              }}
-              sandbox="allow-scripts allow-same-origin allow-popups"
-              loading="lazy"
-              onLoad={() => setIframeLoaded(true)}
-            />
+            {/* The actual iframe — dynamically scaled to fill the container, deferred until first hover */}
+            {hasBeenHovered && (
+              <iframe
+                src={project.link}
+                title={`${project.title} preview`}
+                className="absolute top-0 left-0 border-none transition-opacity duration-500 ease-out"
+                style={{
+                  width: '1440px',
+                  height: `${iframeVirtualHeight}px`,
+                  transform: `scale(${iframeScale})`,
+                  transformOrigin: 'top left',
+                  pointerEvents: 'none',
+                  opacity: iframeLoaded ? 1 : 0,
+                }}
+                sandbox="allow-scripts allow-same-origin allow-popups"
+                loading="lazy"
+                onLoad={() => setIframeLoaded(true)}
+              />
+            )}
 
             {/* Hover overlay */}
             <motion.div
               className="absolute inset-0 z-10 flex items-center justify-center"
               initial={false}
-              animate={{ opacity: isHovered ? 1 : 0 }}
+              animate={{ opacity: isHovered && iframeLoaded ? 1 : 0 }}
               transition={{ duration: 0.3 }}
             >
               <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />

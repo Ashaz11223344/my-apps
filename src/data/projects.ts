@@ -19,8 +19,17 @@ export const projects: Project[] = [
     color: '#8b5cf6' // Violet
   },
   {
-    id: 'project-attendance',
+    id: 'project-focus',
     number: '02',
+    title: 'Focus',
+    description: 'A high-fidelity growth and motivation companion',
+    tags: ['App', 'Self-improvement'],
+    link: 'https://www.getfocus.online/',
+    color: '#fc6e20' // Orange
+  },
+  {
+    id: 'project-attendance',
+    number: '03',
     title: 'Attendify',
     description: 'Easy student attendance tracking powered by facial recognition technology.',
     tags: ['AI', 'Education'],
@@ -29,7 +38,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-encoder',
-    number: '03',
+    number: '04',
     title: 'Image Encoder Decoder',
     description: 'Encrypt your images with our secure steganography-based encoding tool.',
     tags: ['Security', 'Tool'],
@@ -38,7 +47,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-birthday',
-    number: '04',
+    number: '05',
     title: 'Bestfriend\'s Birthday',
     description: 'An authentic, handcrafted birthday celebration website for my bestfriend.',
     tags: ['Creative', 'Personal'],
@@ -47,7 +56,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-bg-remover',
-    number: '05',
+    number: '06',
     title: 'Remove Background',
     description: 'Remove backgrounds from your images effortlessly with AI-powered precision.',
     tags: ['AI', 'Image'],
@@ -56,7 +65,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-movieq',
-    number: '06',
+    number: '07',
     title: 'MovieQ',
     description: 'Discover movies that perfectly match your mood and preferences.',
     tags: ['Entertainment', 'Discovery'],
@@ -65,7 +74,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-aqi',
-    number: '07',
+    number: '08',
     title: 'AQI PRO',
     description: 'Real-time air quality monitoring and health recommendations.',
     tags: ['AI', 'Education'],
@@ -74,7 +83,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-lumina',
-    number: '08',
+    number: '09',
     title: 'Lumina Spaces',
     description: 'Get personalized architectural designs for your spaces.',
     tags: ['Architect', 'Design'],

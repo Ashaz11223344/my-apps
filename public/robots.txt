@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /myresume
+Disallow: /auth/
+
+# Host & Sitemap
+Host: https://ashazapps.qzz.io
+Sitemap: https://ashazapps.qzz.io/sitemap.xml

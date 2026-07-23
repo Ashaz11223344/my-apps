@@ -1,24 +1,114 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+/* ─────────────────────────────────────────
+   FONTS
+   ───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-space: 'Playfair Display', serif;
-  --font-inter: 'Playfair Display', serif;
-  
-  --color-glass-bg: rgba(255, 255, 255, 0.05);
-  --color-glass-border: rgba(255, 255, 255, 0.1);
-  --color-accent: #a078ff;
-  --color-background: #0f0f13;
+  --font-space: 'Space Grotesk', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+/* ─────────────────────────────────────────
+   DARK MODE LIQUID GLASSMORPHISM
+   ───────────────────────────────────────── */
+:root[data-mode="dark"], :root:not([data-mode]) {
+  /* Backgrounds */
+  --bg-base:          #0f0a1a;
+  --bg-elevated:      #1a1429;
+  --bg-inset:         #0e0a17;
+
+  /* Glass Surfaces */
+  --glass-light:      rgba(42, 41, 47, 0.55);
+  --glass-mid:        rgba(30, 27, 41, 0.45);
+  --glass-dark:       rgba(20, 18, 30, 0.35);
+
+  /* Accents */
+  --accent-primary:   #d0bcff;
+  --primary-light:    #e9d5ff;
+  --accent-secondary: #4cd7f6;
+  --accent-tertiary:  #ccbeff;
+
+  /* Text Colors */
+  --text-primary:     #fffbfe;
+  --text-secondary:   #e9d5ff;
+  --text-tertiary:    #cbc3d7;
+
+  /* Glass Effects */
+  --glass-border:     rgba(208, 188, 255, 0.18);
+  --glass-border-hover: rgba(208, 188, 255, 0.4);
+  --shadow-lg:         0 20px 50px rgba(160, 120, 255, 0.14);
+  --shadow-ambient:    0 32px 64px rgba(160, 120, 255, 0.1);
+  --backdrop-blur:     blur(16px);
+  --backdrop-saturate: saturate(150%);
+
+  /* Gradients */
+  --gradient-text:    linear-gradient(135deg, #ffffff 0%, #d0bcff 50%, #4cd7f6 100%);
+  --gradient-hero:    linear-gradient(135deg, #a078ff 0%, #03b5d3 100%);
+
+  /* Scrollbar */
+  --scrollbar-track:  #0f0a1a;
+  --scrollbar-thumb:  rgba(160, 120, 255, 0.3);
+  --scrollbar-hover:  rgba(160, 120, 255, 0.6);
+}
+
+/* ─────────────────────────────────────────
+   LIGHT MODE LIQUID GLASSMORPHISM (Enhanced Contrast)
+   ───────────────────────────────────────── */
+:root[data-mode="light"] {
+  /* Backgrounds */
+  --bg-base:          #f3f0ff;
+  --bg-elevated:      #e9e3fe;
+  --bg-inset:         #e2d9fc;
+
+  /* Glass Surfaces */
+  --glass-light:      rgba(255, 255, 255, 0.88);
+  --glass-mid:        rgba(255, 255, 255, 0.78);
+  --glass-dark:       rgba(237, 230, 254, 0.75);
+
+  /* Accents */
+  --accent-primary:   #6d28d9;
+  --primary-light:    #8b5cf6;
+  --accent-secondary: #0284c7;
+  --accent-tertiary:  #a855f7;
+
+  /* Text Colors */
+  --text-primary:     #0f172a;
+  --text-secondary:   #334155;
+  --text-tertiary:    #475569;
+
+  /* Glass Effects */
+  --glass-border:     rgba(109, 40, 217, 0.25);
+  --glass-border-hover: rgba(109, 40, 217, 0.55);
+  --shadow-lg:         0 10px 30px rgba(109, 40, 217, 0.15), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-ambient:    0 20px 50px rgba(109, 40, 217, 0.22);
+  --backdrop-blur:     blur(16px);
+  --backdrop-saturate: saturate(180%);
+
+  /* Gradients */
+  --gradient-text:    linear-gradient(135deg, #0f172a 0%, #6d28d9 50%, #0284c7 100%);
+  --gradient-hero:    linear-gradient(135deg, #6d28d9 0%, #0284c7 100%);
+
+  /* Scrollbar */
+  --scrollbar-track:  #f3f0ff;
+  --scrollbar-thumb:  rgba(109, 40, 217, 0.35);
+  --scrollbar-hover:  rgba(109, 40, 217, 0.65);
+}
+
+/* ─────────────────────────────────────────
+   GLOBAL STYLES
+   ───────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-background);
-  color: white;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
   font-family: var(--font-inter);
   overflow-x: hidden;
-  /* Prevent overscroll bounce to keep 3D smooth */
   overscroll-behavior: none;
 }
 
@@ -26,45 +116,144 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-space);
 }
 
-/* Glassmorphism Utilities */
+/* ─────────────────────────────────────────
+   GLASS UTILITY CLASSES
+   ───────────────────────────────────────── */
+
 .glass {
-  background: var(--color-glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--color-glass-border);
+  background: var(--glass-light);
+  backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  -webkit-backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.3s ease;
 }
 
+.glass:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--shadow-ambient);
+}
+
+.glass-card {
+  background: var(--glass-mid);
+  backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  -webkit-backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-lg);
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.3s ease;
+}
+
+.glass-card:hover {
+  background: var(--glass-light);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--shadow-ambient);
+  transform: translateY(-4px);
+}
+
+.glass-elevated {
+  background: var(--glass-light);
+  backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  -webkit-backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-ambient);
+}
+
+.glass-inset {
+  background: var(--glass-dark);
+  backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  -webkit-backdrop-filter: var(--backdrop-blur) var(--backdrop-saturate);
+  border: 1px solid var(--glass-border);
+}
+
+/* ─────────────────────────────────────────
+   GRADIENT UTILITIES
+   ───────────────────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #fff 0%, #a078ff 100%);
+  background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Hide scrollbar for cleaner 3D experience */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #0f0f13;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(160, 120, 255, 0.3);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(160, 120, 255, 0.6);
-}
-.glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.gradient-btn {
+  background: var(--gradient-hero);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--backdrop-blur);
   transition: all 0.3s ease;
 }
 
-.glass-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(160, 120, 255, 0.2);
-  transform: translateY(-5px);
+.gradient-btn:hover {
+  box-shadow: var(--shadow-ambient);
+  transform: scale(1.03);
+}
+
+/* Semantic Text Helper Classes */
+.text-accent-primary {
+  color: var(--accent-primary);
+}
+
+.text-theme-primary {
+  color: var(--text-primary);
+}
+
+.text-theme-secondary {
+  color: var(--text-secondary);
+}
+
+.text-theme-tertiary {
+  color: var(--text-tertiary);
+}
+
+/* ─────────────────────────────────────────
+   SCROLLBAR
+   ───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-hover);
+}
+
+/* ─────────────────────────────────────────
+   VIEW TRANSITION CIRCLE ANIMATION STYLES (NO SHUTTER / NO BLINK)
+   ───────────────────────────────────────── */
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* When switching to Dark: old Light view stays on top with z-index 9999 while shrinking */
+html[data-mode="dark"]::view-transition-old(root) {
+  z-index: 9999 !important;
+}
+html[data-mode="dark"]::view-transition-new(root) {
+  z-index: 1 !important;
+}
+
+/* When switching to Light: new Light view stays on top with z-index 9999 while expanding */
+html[data-mode="light"]::view-transition-new(root) {
+  z-index: 9999 !important;
+}
+html[data-mode="light"]::view-transition-old(root) {
+  z-index: 1 !important;
 }

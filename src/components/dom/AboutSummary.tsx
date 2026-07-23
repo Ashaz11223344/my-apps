@@ -12,7 +12,7 @@ export default function AboutSummary() {
             Executive Summary & Overview
           </p>
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-space font-bold" style={{ color: 'var(--text-primary)' }}>
-            About <span className="gradient-text italic">Ashaz Pathan</span>
+            About <span className="gradient-text italic">Ashaz Pathan & Ashaz Apps</span>
           </h2>
         </div>
 
@@ -35,28 +35,28 @@ export default function AboutSummary() {
           </div>
 
           <p className="text-base sm:text-lg font-inter leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>
-            <strong style={{ color: 'var(--text-primary)' }}>Ashaz Pathan</strong> is a Computer Engineering student (MET Bhujbal Knowledge City, 2023–2026) and Full-Stack AI Developer specializing in modern web applications, 3D interactive interfaces (Three.js / React Three Fiber), and automated software tools. He builds high-performance, visually engaging digital solutions for startups, tech teams, and individual clients.
+            <strong style={{ color: 'var(--text-primary)' }}>Ashaz Pathan</strong> is a Computer Engineering student (MET Bhujbal Knowledge City, 2023–2026) and Full-Stack AI Developer based in <strong style={{ color: 'var(--text-primary)' }}>Nashik, India</strong>. He is the creator of <strong style={{ color: 'var(--text-primary)' }}>Ashaz Apps</strong> and this official <strong style={{ color: 'var(--text-primary)' }}>Ashaz portfolio website</strong>, specializing in high-performance web applications, 3D interactive interfaces (Three.js), and automated software tools for startups and engineering projects.
           </p>
 
           {/* Quick Takeaways Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/10">
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Specialization</span>
-              <span className="text-sm font-inter font-medium" style={{ color: 'var(--text-primary)' }}>Full-Stack AI & Web Dev</span>
+              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Developer Identity</span>
+              <span className="text-sm font-inter font-medium" style={{ color: 'var(--text-primary)' }}>Ashaz Pathan (Ashaz Apps)</span>
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Key Award</span>
+              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Key Achievement</span>
               <span className="text-sm font-inter font-medium" style={{ color: 'var(--text-primary)' }}>1st Place MAHA-VEER 2026</span>
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Location & Education</span>
+              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Location & Institution</span>
               <span className="text-sm font-inter font-medium" style={{ color: 'var(--text-primary)' }}>Nashik, India (MET BKC)</span>
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Live Projects</span>
+              <span className="text-xs font-space uppercase tracking-wider text-accent-primary font-semibold">Live Portfolio Projects</span>
               <span className="text-sm font-inter font-medium" style={{ color: 'var(--text-primary)' }}>10+ Web & AI Applications</span>
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function AboutSummary() {
             </div>
             <div className="pt-6">
               <a href="#projects" className="text-xs font-space font-bold uppercase tracking-wider text-accent-primary hover:underline">
-                Explore Selected Projects &rarr;
+                Explore Ashaz Apps & Projects &rarr;
               </a>
             </div>
           </motion.div>
@@ -120,7 +120,7 @@ export default function AboutSummary() {
                 Award-Winning Achievements
               </h3>
               <p className="text-sm font-inter leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
-                Recognized nationally for innovative project development and practical AI solution design.
+                Recognized nationally in India for innovative project development and practical AI solution design.
               </p>
               <ul className="space-y-2 text-xs font-inter" style={{ color: 'var(--text-secondary)' }}>
                 <li className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function AboutSummary() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-accent-primary flex-shrink-0" />
-                  <span>Computer Engineering Diploma (2023–2026)</span>
+                  <span>Computer Engineering Diploma at MET BKC</span>
                 </li>
               </ul>
             </div>
@@ -179,7 +179,7 @@ export default function AboutSummary() {
             </div>
             <div className="pt-6">
               <a href="#contact" className="text-xs font-space font-bold uppercase tracking-wider text-accent-primary hover:underline">
-                Get In Touch For Collaboration &rarr;
+                Contact Ashaz Pathan For Projects &rarr;
               </a>
             </div>
           </motion.div>

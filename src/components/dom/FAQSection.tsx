@@ -13,19 +13,29 @@ interface FAQItem {
 const faqs: FAQItem[] = [
   {
     id: 'faq-1',
-    question: 'Who is Ashaz Pathan and what is his technical background?',
-    answer: 'Ashaz Pathan is a Computer Engineering student at MET Bhujbal Knowledge City, Nashik (2023–2026) and a Full-Stack AI Developer. He specializes in building high-performance web applications, 3D interactive user experiences with Three.js, and practical AI integrations.',
+    question: 'What is Ashaz Apps and who is Ashaz Pathan?',
+    answer: 'Ashaz Pathan is a Computer Engineering student at MET Bhujbal Knowledge City in Nashik, India (2023–2026) and a Full-Stack AI Developer. "Ashaz Apps" represents his personal ecosystem of high-performance web applications, 3D interactive interfaces (Three.js), and intelligent software tools.',
     highlights: [
-      'Diploma in Computer Engineering at MET Bhujbal Knowledge City',
+      'Ashaz Pathan — Computer Engineer & Full-Stack AI Developer in Nashik, India',
+      'Creator of Ashaz Apps and official Ashaz Pathan Portfolio website',
       '1st Place Winner at MAHA-VEER 2026 National Level Project Competition',
-      'Completed 3-Month Full-Stack App Development (AI/ML) Training at NPIT Solutions',
-      'Proficient in React, TypeScript, Python, Tailwind CSS, Three.js, and MySQL'
+      'Completed 3-Month Full-Stack App Development (AI/ML) Training at NPIT Solutions'
     ]
   },
   {
     id: 'faq-2',
+    question: 'Is Ashaz Pathan based in Nashik, India?',
+    answer: 'Yes, Ashaz Pathan is located in Nashik, Maharashtra, India. He builds software solutions locally and collaborates remotely with startups, businesses, and development teams globally.',
+    highlights: [
+      'Location: Nashik, Maharashtra, India',
+      'Education: MET Bhujbal Knowledge City (Computer Engineering)',
+      'Remote Collaboration: Web App Development, AI/ML APIs, UI/UX Design'
+    ]
+  },
+  {
+    id: 'faq-3',
     question: 'What full-stack web development and AI services does Ashaz offer?',
-    answer: 'Ashaz offers custom web app development, AI feature integrations (e.g. facial recognition, automated image processing, computer vision), responsive 3D web graphics, and web utility tool engineering for startups, businesses, and engineering projects.',
+    answer: 'Ashaz offers custom web app development, AI feature integrations (facial recognition, computer vision, automated processing), responsive 3D web graphics, and web utility tool engineering for startups, businesses, and engineering projects.',
     highlights: [
       'Interactive 3D Web UI & Custom Animations (Three.js / React Three Fiber / Framer Motion)',
       'Full-Stack Web App Development (React, Vite, Node.js, Python)',
@@ -34,9 +44,9 @@ const faqs: FAQItem[] = [
     ]
   },
   {
-    id: 'faq-3',
-    question: 'What key software projects and applications has Ashaz Pathan built?',
-    answer: 'Ashaz has developed over 10 live, fully functional software applications spanning web tools, AI systems, and creative interactive platforms.',
+    id: 'faq-4',
+    question: 'What key software projects are included in Ashaz Apps and Portfolio?',
+    answer: 'The Ashaz Pathan portfolio features over 10 live software applications spanning utility tools, AI systems, and interactive platforms.',
     highlights: [
       'Filex (https://file-x.app) — File management & processing suite',
       'Focus (https://www.getfocus.online) — Growth & motivation companion',
@@ -46,14 +56,14 @@ const faqs: FAQItem[] = [
     ]
   },
   {
-    id: 'faq-4',
-    question: 'How can recruiters, clients, or startups contact and hire Ashaz Pathan?',
-    answer: 'You can easily get in touch with Ashaz Pathan via email at ashazpathan8@gmail.com, or connect on LinkedIn and GitHub. He is available for freelance web projects, full-stack software development roles, and engineering collaborations.',
+    id: 'faq-5',
+    question: 'How to contact Ashaz Pathan or access the official Ashaz website?',
+    answer: 'You can access the official Ashaz Pathan website at https://ashazapps.qzz.io/, get in touch via email at ashazpathan8@gmail.com, or connect on LinkedIn and GitHub.',
     highlights: [
+      'Official Ashaz Website: https://ashazapps.qzz.io/',
       'Direct Email: ashazpathan8@gmail.com',
       'LinkedIn Profile: linkedin.com/in/ashaz-pathan-751317336',
-      'GitHub Codebase: github.com/Ashaz11223344',
-      'Interactive Resume & Portfolio: Explore /myresume for full details'
+      'GitHub Codebase: github.com/Ashaz11223344'
     ]
   }
 ];
@@ -71,13 +81,13 @@ export default function FAQSection() {
         {/* Section Heading */}
         <div className="mb-12 sm:mb-16">
           <p className="text-xs sm:text-sm tracking-[0.2em] text-accent-primary font-space uppercase mb-2 sm:mb-4">
-            Answers & Information
+            Ashaz Apps & Developer FAQ
           </p>
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-space font-bold" style={{ color: 'var(--text-primary)' }}>
             Frequently Asked <span className="gradient-text italic">Questions</span>
           </h2>
           <p className="mt-4 text-base sm:text-lg font-inter max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-            Quick, direct answers regarding Ashaz Pathan's engineering skills, active projects, credentials, and collaboration options.
+            Quick, direct answers regarding Ashaz Pathan's developer profile, Ashaz Apps, location in Nashik, India, and engineering credentials.
           </p>
         </div>
 
@@ -155,7 +165,7 @@ export default function FAQSection() {
             to="/myresume"
             className="inline-flex items-center gap-2 text-xs font-space font-bold uppercase tracking-wider text-accent-primary hover:underline whitespace-nowrap"
           >
-            <span>View Full Resume Page</span>
+            <span>View Ashaz Pathan Resume</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

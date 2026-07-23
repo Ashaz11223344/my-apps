@@ -6,7 +6,9 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Menu, X, FileText } from 'lucide-react';
 import Scene from './components/canvas/Scene';
 import Hero from './components/dom/Hero';
+import AboutSummary from './components/dom/AboutSummary';
 import ProjectGallery from './components/dom/ProjectGallery';
+import FAQSection from './components/dom/FAQSection';
 import Contact from './components/dom/Contact';
 import PageLoader from './components/dom/PageLoader';
 import Resume from './components/dom/Resume';
@@ -81,28 +83,42 @@ function AppContent() {
               >
                 {/* Brand Logo */}
                 <div className="font-space font-bold text-base sm:text-xl tracking-tighter">
-                  <span className="gradient-text uppercase">Ashaz Pathan</span>
+                  <a href="#hero" className="gradient-text uppercase">Ashaz Pathan</a>
                 </div>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex gap-2 text-xs sm:text-sm font-medium tracking-wide items-center">
+                <div className="hidden md:flex gap-1.5 text-xs sm:text-sm font-medium tracking-wide items-center">
                   <a
                     href="#hero"
-                    className="px-4 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
+                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
                     style={{ color: 'var(--text-primary)' }}
                   >
                     Home
                   </a>
                   <a
+                    href="#about"
+                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    About
+                  </a>
+                  <a
                     href="#projects"
-                    className="px-4 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
+                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
                     style={{ color: 'var(--text-primary)' }}
                   >
                     Projects
                   </a>
                   <a
+                    href="#faq"
+                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    FAQ
+                  </a>
+                  <a
                     href="#contact"
-                    className="px-4 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
+                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
                     style={{ color: 'var(--text-primary)' }}
                   >
                     Contact
@@ -112,7 +128,7 @@ function AppContent() {
 
                   <Link
                     to="/myresume"
-                    className="gradient-btn px-5 py-2 rounded-full text-xs font-bold tracking-tight transition-all duration-300 hover:scale-105 shadow-md ml-1"
+                    className="gradient-btn px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-all duration-300 hover:scale-105 shadow-md ml-1"
                   >
                     RESUME
                   </Link>
@@ -147,27 +163,43 @@ function AppContent() {
                     className="fixed top-20 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-40 md:hidden p-6 glass-elevated rounded-3xl flex flex-col gap-6 shadow-2xl"
                     style={{ background: 'var(--glass-light)', backdropFilter: 'var(--backdrop-blur)' }}
                   >
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3">
                       <a
                         href="#hero"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="text-xl font-space font-bold py-2.5 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                         style={{ color: 'var(--text-primary)' }}
                       >
                         Home
                       </a>
                       <a
+                        href="#about"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                        style={{ color: 'var(--text-primary)' }}
+                      >
+                        About
+                      </a>
+                      <a
                         href="#projects"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="text-xl font-space font-bold py-2.5 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                         style={{ color: 'var(--text-primary)' }}
                       >
                         Projects
                       </a>
                       <a
+                        href="#faq"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                        style={{ color: 'var(--text-primary)' }}
+                      >
+                        FAQ
+                      </a>
+                      <a
                         href="#contact"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="text-xl font-space font-bold py-2.5 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                         style={{ color: 'var(--text-primary)' }}
                       >
                         Contact
@@ -190,7 +222,9 @@ function AppContent() {
 
               <main>
                 <Hero />
+                <AboutSummary />
                 <ProjectGallery />
+                <FAQSection />
                 <Contact />
               </main>
             </div>

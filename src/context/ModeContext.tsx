@@ -26,6 +26,8 @@ export function ModeProvider({ children }: { children: ReactNode }) {
   });
 
   const toggleMode = useCallback((opts?: ToggleOptions | React.MouseEvent) => {
+    if (typeof document === 'undefined') return;
+
     let x = window.innerWidth - 60;
     let y = 40;
 
@@ -42,7 +44,8 @@ export function ModeProvider({ children }: { children: ReactNode }) {
     const isGoingLight = isDark; // true if current mode is Dark, going to Light
 
     // Check if View Transitions API is supported
-    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+    const hasViewTransition = 'startViewTransition' in document;
+    if (hasViewTransition) {
       const maxRadius = Math.hypot(
         Math.max(x, window.innerWidth - x),
         Math.max(y, window.innerHeight - y)
@@ -50,8 +53,7 @@ export function ModeProvider({ children }: { children: ReactNode }) {
 
       const nextIsDark = !isGoingLight;
 
-      // @ts-expect-error startViewTransition is a native browser API
-      const transition = document.startViewTransition(() => {
+      const transition = (document as any).startViewTransition(() => {
         setIsDark(nextIsDark);
         localStorage.setItem('isDarkMode', JSON.stringify(nextIsDark));
         document.documentElement.setAttribute('data-mode', nextIsDark ? 'dark' : 'light');

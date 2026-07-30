@@ -76,6 +76,7 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [iframeScale, setIframeScale] = useState(0.35);
+  const [containerHeight, setContainerHeight] = useState(0);
 
   useEffect(() => {
     const container = iframeContainerRef.current;
@@ -84,9 +85,10 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
     const IFRAME_WIDTH = 1440;
 
     const updateScale = () => {
-      const { width } = container.getBoundingClientRect();
+      const { width, height } = container.getBoundingClientRect();
       if (width > 0) {
         setIframeScale(width / IFRAME_WIDTH);
+        setContainerHeight(height);
       }
     };
 
@@ -117,7 +119,10 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
   }
 
   const background = useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, ${project.color}30, transparent 80%)`;
-  const iframeVirtualHeight = iframeScale > 0 ? Math.ceil((1 / iframeScale) * 900) : 900;
+  const iframeVirtualHeight = 900;
+  const translateYVirtual = iframeScale > 0 && containerHeight > 0 
+    ? (containerHeight / iframeScale - iframeVirtualHeight) / 2 
+    : 0;
 
   return (
     <motion.div
@@ -217,7 +222,7 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
               style={{
                 width: '1440px',
                 height: `${iframeVirtualHeight}px`,
-                transform: `scale(${iframeScale})`,
+                transform: `scale(${iframeScale}) translateY(${translateYVirtual}px)`,
                 transformOrigin: 'top left',
                 pointerEvents: 'none',
                 opacity: iframeLoaded ? 1 : 0,

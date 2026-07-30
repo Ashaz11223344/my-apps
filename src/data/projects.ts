@@ -37,9 +37,18 @@ export const projects: Project[] = [
   link: 'https://invoice-generator-omega-five.vercel.app/',
   color: '#8b5cf6' // Violet
 },
+{
+  id: 'project-facet',
+  number: '04',
+  title: 'Facet - Minimal Clock',
+  description: 'A customizable minimalist clock application with dynamic background effects.',
+  tags: ['Web App', 'Tool'],
+  link: 'https://facet-minimal-clock-app.vercel.app/',
+  color: '#d9381e' // Deep Coral
+},
   {
     id: 'project-attendance',
-    number: '04',
+    number: '05',
     title: 'Attendify',
     description: 'Easy student attendance tracking powered by facial recognition technology.',
     tags: ['AI', 'Education'],
@@ -48,7 +57,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-encoder',
-    number: '05',
+    number: '06',
     title: 'Image Encoder Decoder',
     description: 'Encrypt your images with our secure steganography-based encoding tool.',
     tags: ['Security', 'Tool'],
@@ -57,7 +66,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-birthday',
-    number: '06',
+    number: '07',
     title: 'Bestfriend\'s Birthday',
     description: 'An authentic, handcrafted birthday celebration website for my bestfriend.',
     tags: ['Creative', 'Personal'],
@@ -66,7 +75,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-bg-remover',
-    number: '07',
+    number: '08',
     title: 'Remove Background',
     description: 'Remove backgrounds from your images effortlessly with AI-powered precision.',
     tags: ['AI', 'Image'],
@@ -75,7 +84,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-movieq',
-    number: '08',
+    number: '09',
     title: 'MovieQ',
     description: 'Discover movies that perfectly match your mood and preferences.',
     tags: ['Entertainment', 'Discovery'],
@@ -84,7 +93,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-aqi',
-    number: '09',
+    number: '10',
     title: 'AQI PRO',
     description: 'Real-time air quality monitoring and health recommendations.',
     tags: ['AI', 'Education'],
@@ -93,7 +102,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-lumina',
-    number: '10',
+    number: '11',
     title: 'Lumina Spaces',
     description: 'Get personalized architectural designs for your spaces.',
     tags: ['Architect', 'Design'],

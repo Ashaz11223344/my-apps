@@ -79,8 +79,8 @@ export const projects: Project[] = [
     title: 'Remove Background',
     description: 'Remove backgrounds from your images effortlessly with AI-powered precision.',
     tags: ['AI', 'Image'],
-    link: 'https://bg-remover-etms.onrender.com/',
-    color: '#ec4899' // Pink
+    link: 'https://bg-remove-bj82.onrender.com/',
+    color: '#d4493f' // Red
   },
   {
     id: 'project-movieq',

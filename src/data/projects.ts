@@ -54,24 +54,25 @@ export const projects: Project[] = [
     link: 'https://vidpull-5jjb.onrender.com/',
     color: '#6e1c1c' // Crimson
   },
-  {
-    id: 'project-invoice',
-    number: '06',
-    title: 'Invoice Generator',
-    description: 'Create professional invoices in minutes with a sleek, modern interface.',
-    tags: ['Web App', 'Tool'],
-    link: 'https://invoice-generator-omega-five.vercel.app/',
-    color: '#8b5cf6' // Violet
-  },
-  {
+    {
     id: 'project-facet',
-    number: '07',
+    number: '06',
     title: 'Facet - Minimal Clock',
     description: 'A customizable minimalist clock application with dynamic background effects.',
     tags: ['Web App', 'Tool'],
     link: 'https://facet-minimal-clock-app.vercel.app/',
     color: '#d9381e' // Deep Coral
   },
+  {
+    id: 'project-invoice',
+    number: '07',
+    title: 'Invoice Generator',
+    description: 'Create professional invoices in minutes with a sleek, modern interface.',
+    tags: ['Web App', 'Tool'],
+    link: 'https://invoice-generator-omega-five.vercel.app/',
+    color: '#8b5cf6' // Violet
+  },
+
   {
     id: 'project-encoder',
     number: '08',

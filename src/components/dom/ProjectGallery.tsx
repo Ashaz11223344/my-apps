@@ -1,7 +1,14 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useMotionTemplate, AnimatePresence } from 'framer-motion';
 import { projects, type Project } from '../../data/projects';
-import { X, ExternalLink, Maximize2, Monitor } from 'lucide-react';
+import { X, ExternalLink, Maximize2, Monitor, AlertTriangle } from 'lucide-react';
+import { getProjectAvailability } from '../../features/projectAvailability';
+import { 
+  UnavailablePreviewScreen, 
+  ProjectAvailabilityBadge, 
+  UnavailableNoticeModal,
+  PreservedProjectDetailModal 
+} from './UnavailableProjectView';
 
 export default function ProjectGallery() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,7 +70,7 @@ export default function ProjectGallery() {
   );
 }
 
-/* ─── Project Card with Immediate Auto-Loading Preview ─── */
+/* ─── Project Card with Interactive Preview & Availability Awareness ─── */
 function ProjectCard({ project, index, onExpand }: { project: Project; index: number; onExpand: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const iframeContainerRef = useRef<HTMLDivElement>(null);
@@ -77,8 +84,14 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
   const [isHovered, setIsHovered] = useState(false);
   const [iframeScale, setIframeScale] = useState(0.35);
   const [containerHeight, setContainerHeight] = useState(0);
+  const [showNoticeModal, setShowNoticeModal] = useState(false);
+
+  // Fetch project availability state by ID
+  const availability = getProjectAvailability(project.id);
+  const isUnavailable = availability.flag === 'Unavailable';
 
   useEffect(() => {
+    if (isUnavailable) return;
     const container = iframeContainerRef.current;
     if (!container) return;
 
@@ -97,7 +110,7 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
     const resizeObserver = new ResizeObserver(updateScale);
     resizeObserver.observe(container);
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [isUnavailable]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -133,7 +146,7 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`project-card flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 sm:gap-8 md:gap-16 items-stretch`}
     >
-      {/* Live Website Preview */}
+      {/* Live Website Preview or Interactive Maintenance Standby */}
       <motion.div
         style={{ y }}
         className="w-full md:w-[55%] aspect-[16/10] rounded-2xl relative overflow-hidden group cursor-pointer shrink-0"
@@ -146,7 +159,9 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
         <div
           className="absolute -inset-[1px] rounded-2xl z-0 opacity-60 group-hover:opacity-100 transition-opacity duration-500"
           style={{
-            background: `linear-gradient(135deg, ${project.color}50, transparent 40%, transparent 60%, ${project.color}30)`,
+            background: isUnavailable 
+              ? `linear-gradient(135deg, rgba(245, 158, 11, 0.6), transparent 40%, transparent 60%, ${project.color}40)`
+              : `linear-gradient(135deg, ${project.color}50, transparent 40%, transparent 60%, ${project.color}30)`,
           }}
         />
 
@@ -167,97 +182,107 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
             </div>
             <div className="flex-1 mx-2">
               <div
-                className="rounded-md px-3 py-0.5 text-[10px] truncate max-w-[160px] sm:max-w-xs mx-auto text-center font-mono"
-                style={{ background: 'var(--bg-base)', color: 'var(--text-tertiary)' }}
+                className="rounded-md px-3 py-0.5 text-[10px] truncate max-w-[160px] sm:max-w-xs mx-auto text-center font-mono flex items-center justify-center gap-1.5"
+                style={{ background: 'var(--bg-base)', color: isUnavailable ? '#fbbf24' : 'var(--text-tertiary)' }}
               >
-                {project.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                {isUnavailable && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />}
+                <span>{project.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
               </div>
             </div>
             <Monitor className="w-3 h-3" style={{ color: 'var(--text-tertiary)' }} />
           </div>
 
-          {/* Iframe Container */}
-          <div ref={iframeContainerRef} className="relative w-full h-[calc(100%-2rem)] overflow-hidden">
-            {/* Loading skeleton while website preview is loading */}
-            {!iframeLoaded && (
-              <div
-                className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 sm:p-6 text-center"
-                style={{ background: 'var(--bg-inset)' }}
-              >
-                <div 
-                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 animate-pulse"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${project.color}20, ${project.color}40)`,
-                    border: `1px solid ${project.color}50`,
-                    boxShadow: `0 0 20px ${project.color}20`
-                  }}
-                >
-                  <span className="text-xl sm:text-2xl font-bold font-space" style={{ color: project.color }}>
-                    {project.title.charAt(0)}
-                  </span>
-                </div>
-                <h4 className="font-space font-medium text-xs sm:text-sm mb-1" style={{ color: 'var(--text-primary)' }}>{project.title}</h4>
-                <div 
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[9px] sm:text-[10px] uppercase tracking-wider font-space mt-1"
-                  style={{ 
-                    borderColor: `${project.color}50`,
-                    background: `${project.color}15`,
-                    color: 'var(--text-secondary)'
-                  }}
-                >
-                  <div
-                    className="w-3 h-3 rounded-full border-2 border-transparent animate-spin"
-                    style={{ borderTopColor: project.color, borderRightColor: `${project.color}50` }}
-                  />
-                  Loading Preview...
-                </div>
-              </div>
-            )}
-
-            {/* Actual Iframe — Loads automatically on page load */}
-            <iframe
-              src={project.link}
-              title={`${project.title} preview`}
-              className="absolute top-0 left-0 border-none transition-opacity duration-700 ease-out"
-              style={{
-                width: '1440px',
-                height: `${iframeVirtualHeight}px`,
-                transform: `scale(${iframeScale}) translateY(${translateYVirtual}px)`,
-                transformOrigin: 'top left',
-                pointerEvents: 'none',
-                opacity: iframeLoaded ? 1 : 0,
-              }}
-              sandbox="allow-scripts allow-same-origin allow-popups"
-              loading="eager"
-              onLoad={() => setIframeLoaded(true)}
+          {/* Interactive Screen Area */}
+          {isUnavailable ? (
+            <UnavailablePreviewScreen
+              project={project}
+              metadata={availability}
+              onExpand={onExpand}
+              isHovered={isHovered}
             />
+          ) : (
+            <div ref={iframeContainerRef} className="relative w-full h-[calc(100%-2rem)] overflow-hidden">
+              {/* Loading skeleton while website preview is loading */}
+              {!iframeLoaded && (
+                <div
+                  className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 sm:p-6 text-center"
+                  style={{ background: 'var(--bg-inset)' }}
+                >
+                  <div 
+                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 animate-pulse"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${project.color}20, ${project.color}40)`,
+                      border: `1px solid ${project.color}50`,
+                      boxShadow: `0 0 20px ${project.color}20`
+                    }}
+                  >
+                    <span className="text-xl sm:text-2xl font-bold font-space" style={{ color: project.color }}>
+                      {project.title.charAt(0)}
+                    </span>
+                  </div>
+                  <h4 className="font-space font-medium text-xs sm:text-sm mb-1" style={{ color: 'var(--text-primary)' }}>{project.title}</h4>
+                  <div 
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[9px] sm:text-[10px] uppercase tracking-wider font-space mt-1"
+                    style={{ 
+                      borderColor: `${project.color}50`,
+                      background: `${project.color}15`,
+                      color: 'var(--text-secondary)'
+                    }}
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full border-2 border-transparent animate-spin"
+                      style={{ borderTopColor: project.color, borderRightColor: `${project.color}50` }}
+                    />
+                    Loading Preview...
+                  </div>
+                </div>
+              )}
 
-            {/* Hover / Tap overlay */}
-            <motion.div
-              className="absolute inset-0 z-10 flex items-center justify-center"
-              initial={false}
-              animate={{ opacity: isHovered && iframeLoaded ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+              {/* Actual Iframe — Loads automatically on page load */}
+              <iframe
+                src={project.link}
+                title={`${project.title} preview`}
+                className="absolute top-0 left-0 border-none transition-opacity duration-700 ease-out"
+                style={{
+                  width: '1440px',
+                  height: `${iframeVirtualHeight}px`,
+                  transform: `scale(${iframeScale}) translateY(${translateYVirtual}px)`,
+                  transformOrigin: 'top left',
+                  pointerEvents: 'none',
+                  opacity: iframeLoaded ? 1 : 0,
+                }}
+                sandbox="allow-scripts allow-same-origin allow-popups"
+                loading="eager"
+                onLoad={() => setIframeLoaded(true)}
+              />
+
+              {/* Hover / Tap overlay */}
               <motion.div
-                className="relative flex flex-col items-center gap-2 sm:gap-3"
+                className="absolute inset-0 z-10 flex items-center justify-center"
                 initial={false}
-                animate={{ y: isHovered ? 0 : 10, scale: isHovered ? 1 : 0.9 }}
+                animate={{ opacity: isHovered && iframeLoaded ? 1 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <div
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border border-white/30"
-                  style={{ background: `${project.color}40` }}
+                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+                <motion.div
+                  className="relative flex flex-col items-center gap-2 sm:gap-3"
+                  initial={false}
+                  animate={{ y: isHovered ? 0 : 10, scale: isHovered ? 1 : 0.9 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <Maximize2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <span className="text-white text-xs sm:text-sm font-medium tracking-wider uppercase font-space">
-                  Expand Preview
-                </span>
+                  <div
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border border-white/30"
+                    style={{ background: `${project.color}40` }}
+                  >
+                    <Maximize2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <span className="text-white text-xs sm:text-sm font-medium tracking-wider uppercase font-space">
+                    Expand Preview
+                  </span>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Interactive hover glow */}
@@ -267,13 +292,22 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
         />
       </motion.div>
 
-      {/* Info Section */}
+      {/* Info Section — Full Details Preserved */}
       <div
         className="w-full md:w-[45%] flex flex-col justify-center p-6 sm:p-8 md:p-12 glass-card relative z-20"
       >
         <span className="text-5xl sm:text-6xl md:text-8xl font-space font-black mb-2 sm:mb-4" style={{ color: 'var(--accent-tertiary)', opacity: 0.35 }}>
           {project.number}
         </span>
+
+        {/* Interactive Availability Indicator for Unavailable Projects */}
+        {isUnavailable && (
+          <ProjectAvailabilityBadge
+            metadata={availability}
+            onInfoClick={onExpand}
+          />
+        )}
+
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-space font-bold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>
           {project.title}
         </h3>
@@ -303,27 +337,56 @@ function ProjectCard({ project, index, onExpand }: { project: Project; index: nu
             style={{ background: `linear-gradient(135deg, ${project.color}, ${project.color}bb)`, borderRadius: '0.75rem' }}
           >
             <Maximize2 className="w-4 h-4" />
-            Full Preview
+            {isUnavailable ? 'Project Specs & Status' : 'Full Preview'}
           </button>
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3.5 glass rounded-xl font-medium transition-all duration-300 hover:scale-105 w-full sm:w-auto justify-center text-center"
-            style={{ color: 'var(--text-primary)', borderRadius: '0.75rem' }}
-          >
-            <ExternalLink className="w-4 h-4" />
-            Visit Site
-          </a>
+
+          {isUnavailable ? (
+            <button
+              onClick={() => setShowNoticeModal(true)}
+              className="inline-flex items-center gap-2 px-6 py-3.5 glass rounded-xl font-medium transition-all duration-300 hover:scale-105 w-full sm:w-auto justify-center text-center cursor-pointer"
+              style={{ 
+                color: '#fbbf24', 
+                borderRadius: '0.75rem',
+                border: '1px solid rgba(245, 158, 11, 0.4)' 
+              }}
+            >
+              <AlertTriangle className="w-4 h-4 text-amber-400" />
+              Offline Notice
+            </button>
+          ) : (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 glass rounded-xl font-medium transition-all duration-300 hover:scale-105 w-full sm:w-auto justify-center text-center"
+              style={{ color: 'var(--text-primary)', borderRadius: '0.75rem' }}
+            >
+              <ExternalLink className="w-4 h-4" />
+              Visit Site
+            </a>
+          )}
         </div>
+
+        {/* Offline Notice Modal for Unavailable Projects */}
+        {isUnavailable && (
+          <UnavailableNoticeModal
+            project={project}
+            metadata={availability}
+            isOpen={showNoticeModal}
+            onClose={() => setShowNoticeModal(false)}
+            onOpenDetails={onExpand}
+          />
+        )}
       </div>
     </motion.div>
   );
 }
 
-/* ─── Full-Screen Expanded Modal ─── */
+/* ─── Full-Screen Expanded Modal with Preserved Project Details ─── */
 function ExpandedProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const availability = getProjectAvailability(project.id);
+  const isUnavailable = availability.flag === 'Unavailable';
 
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
@@ -349,7 +412,11 @@ function ExpandedProjectModal({ project, onClose }: { project: Project; onClose:
       {/* Modal Content */}
       <motion.div
         className="relative w-full h-full max-w-6xl max-h-[96vh] sm:max-h-[92vh] rounded-xl sm:rounded-2xl overflow-hidden flex flex-col glass-elevated"
-        style={{ boxShadow: `0 0 100px ${project.color}30, var(--shadow-ambient)` }}
+        style={{ 
+          boxShadow: isUnavailable 
+            ? `0 0 100px rgba(245, 158, 11, 0.25), var(--shadow-ambient)` 
+            : `0 0 100px ${project.color}30, var(--shadow-ambient)` 
+        }}
         initial={{ scale: 0.9, y: 30, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.9, y: 30, opacity: 0 }}
@@ -380,7 +447,14 @@ function ExpandedProjectModal({ project, onClose }: { project: Project; onClose:
               >
                 {project.title.charAt(0)}
               </div>
-              <span className="text-xs sm:text-sm font-medium font-space truncate" style={{ color: 'var(--text-primary)' }}>{project.title}</span>
+              <span className="text-xs sm:text-sm font-medium font-space truncate" style={{ color: 'var(--text-primary)' }}>
+                {project.title}
+              </span>
+              {isUnavailable && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider shrink-0">
+                  Maintenance
+                </span>
+              )}
             </div>
           </div>
 
@@ -390,11 +464,11 @@ function ExpandedProjectModal({ project, onClose }: { project: Project; onClose:
               className="rounded-lg px-4 py-1.5 flex items-center gap-2 border min-w-[280px] md:min-w-[380px]"
               style={{ background: 'var(--bg-base)', borderColor: 'var(--glass-border)' }}
             >
-              <div className="w-3 h-3 rounded-full border border-green-500 flex items-center justify-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+              <div className={`w-3 h-3 rounded-full border ${isUnavailable ? 'border-amber-500' : 'border-green-500'} flex items-center justify-center`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${isUnavailable ? 'bg-amber-400' : 'bg-green-400'}`} />
               </div>
               <span className="text-xs font-mono truncate" style={{ color: 'var(--text-tertiary)' }}>
-                {project.link}
+                {project.link} {isUnavailable ? '[Offline]' : ''}
               </span>
             </div>
           </div>
@@ -421,29 +495,33 @@ function ExpandedProjectModal({ project, onClose }: { project: Project; onClose:
           </div>
         </div>
 
-        {/* Iframe Area */}
-        <div className="relative flex-1 bg-white">
-          {!iframeLoaded && (
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center" style={{ background: 'var(--bg-base)' }}>
-              <div className="relative mb-4">
-                <div
-                  className="w-12 h-12 rounded-full border-[3px] border-transparent animate-spin"
-                  style={{ borderTopColor: project.color, borderRightColor: `${project.color}40` }}
-                />
+        {/* Modal Main Content: Preserved Details for Unavailable projects, Live Iframe for active projects */}
+        {isUnavailable ? (
+          <PreservedProjectDetailModal project={project} metadata={availability} />
+        ) : (
+          <div className="relative flex-1 bg-white">
+            {!iframeLoaded && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center" style={{ background: 'var(--bg-base)' }}>
+                <div className="relative mb-4">
+                  <div
+                    className="w-12 h-12 rounded-full border-[3px] border-transparent animate-spin"
+                    style={{ borderTopColor: project.color, borderRightColor: `${project.color}40` }}
+                  />
+                </div>
+                <p className="text-sm font-medium font-space" style={{ color: 'var(--text-primary)' }}>Loading {project.title}...</p>
+                <p className="text-xs mt-1 font-mono" style={{ color: 'var(--text-tertiary)' }}>Connecting to site</p>
               </div>
-              <p className="text-sm font-medium font-space" style={{ color: 'var(--text-primary)' }}>Loading {project.title}...</p>
-              <p className="text-xs mt-1 font-mono" style={{ color: 'var(--text-tertiary)' }}>Connecting to site</p>
-            </div>
-          )}
+            )}
 
-          <iframe
-            src={project.link}
-            title={`${project.title} full preview`}
-            className="w-full h-full border-none"
-            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-            onLoad={() => setIframeLoaded(true)}
-          />
-        </div>
+            <iframe
+              src={project.link}
+              title={`${project.title} full preview`}
+              className="w-full h-full border-none"
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              onLoad={() => setIframeLoaded(true)}
+            />
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );

@@ -364,9 +364,14 @@ export default function Resume() {
               <div className="space-y-6 sm:space-y-8">
                 {[
                   {
-                    title: "Lumina Spaces – AI Interior Redesign System",
-                    desc: "An intelligent spatial redesign platform that transforms static room images into structurally accurate, build-ready 3D concepts while preserving architectural geometry.",
-                    tools: "React 19, TypeScript, Three.js, WebGL, Multimodal AI"
+                    title: "Convo AI – Voice-First Intelligent Desktop Operating Agent",
+                    desc: "An intelligent desktop companion featuring hands-free acoustic activation, deep personal memory, on-device biometric security, and native integrations across Google Workspace, GitHub, and Windows automation.",
+                    tools: "Python 3.11, PyQt6, UniFace, ONNX Runtime, Deepgram API, Edge TTS, OpenCV"
+                  },
+                  {
+                    title: "Focus – Daily Quotes & Growth",
+                    desc: "A privacy-first personal productivity and digital wellness application that combines daily motivation, distraction blocking, habit tracking, mood journaling, and progress analytics to help users build discipline and maintain consistency.",
+                    tools: "Kotlin, Jetpack Compose, Material 3, Kotlin Coroutines, Room Database, Biometric Authentication"
                   },
                   {
                     title: "MovieQ – AI Powered Mood Based Recommendation Engine",
@@ -374,9 +379,9 @@ export default function Resume() {
                     tools: "React 18, TypeScript, OpenAI API, TMDB API, Tailwind CSS"
                   },
                   {
-                    title: "Attendify – Smart Attendance Management System",
-                    desc: "A real-time, role-based educational platform that automates attendance tracking through client-side facial recognition and reactive data syncing.",
-                    tools: "React 18, TypeScript, Convex (BaaS), face-api.js, Tailwind CSS"
+                    title: "Lumina Spaces – AI Interior Redesign System",
+                    desc: "An intelligent spatial redesign platform that transforms static room images into structurally accurate, build-ready 3D concepts while preserving architectural geometry.",
+                    tools: "React 19, TypeScript, Three.js, WebGL, Multimodal AI"
                   }
                 ].map((project, index) => (
                   <div key={index} className="group">

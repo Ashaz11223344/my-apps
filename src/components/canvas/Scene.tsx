@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Float, Points, PointMaterial, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
@@ -12,16 +12,26 @@ interface SceneProps {
 export default function Scene({ containerRef }: SceneProps) {
   const groupRef = useRef<THREE.Group>(null);
   const sphereRef = useRef<THREE.Mesh>(null);
+  const color1 = useRef(new THREE.Color());
+  const color2 = useRef(new THREE.Color());
   const { isDark } = useModeContext();
 
   // Use Three.js state to detect current canvas dimensions
   const { width } = useThree((state) => state.size);
   const isMobile = width < 768;
 
-  // Create 5000 particles in a sphere
-  const particles = useRef(
-    new Float32Array(inSphere(new Float32Array(5000), { radius: 4 }))
-  );
+  // Create particles in a sphere with exact 3-float alignment and NaN sanitization
+  const particleCount = isMobile ? 1200 : 3000;
+  const positions = useMemo(() => {
+    const coords = new Float32Array(particleCount * 3);
+    inSphere(coords, { radius: 4 });
+    for (let i = 0; i < coords.length; i++) {
+      if (!Number.isFinite(coords[i])) {
+        coords[i] = 0;
+      }
+    }
+    return coords;
+  }, [particleCount]);
 
   // Per-mode colors and blending mode
   // NormalBlending prevents particles from washing out into white background in light mode!
@@ -31,7 +41,7 @@ export default function Scene({ containerRef }: SceneProps) {
   const particleOpacity = isDark ? 0.8 : 0.95;
 
   const sphereColorA = isDark ? '#d0bcff' : '#6d28d9'; // start color
-  const sphereColorB = isDark ? '#ff78a0' : '#0284c7'; // scroll end color
+  const sphereColorB = isDark ? '#38bdf8' : '#0284c7'; // scroll end color (cool cyan/blue instead of red)
 
   useFrame((state, delta) => {
     // Rotate particle swarm slowly
@@ -42,23 +52,31 @@ export default function Scene({ containerRef }: SceneProps) {
 
     // Scroll parallax & sphere color lerp
     if (containerRef.current && groupRef.current && sphereRef.current) {
-      const scrollY = containerRef.current.scrollTop;
-      const height = containerRef.current.scrollHeight - containerRef.current.clientHeight;
-      const scrollProgress = height > 0 ? scrollY / height : 0;
+      const scrollY = containerRef.current.scrollTop || 0;
+      const scrollHeight = containerRef.current.scrollHeight || 0;
+      const clientHeight = containerRef.current.clientHeight || 0;
+      const height = scrollHeight - clientHeight;
+      const rawProgress = height > 0 ? scrollY / height : 0;
+      const scrollProgress = Number.isFinite(rawProgress) ? Math.min(Math.max(rawProgress, 0), 1) : 0;
 
       groupRef.current.position.y = scrollProgress * 5;
       groupRef.current.rotation.y = scrollProgress * Math.PI * 2;
 
       // Make central sphere pulse
       const baseScale = isMobile ? 0.75 : 1.0;
-      const scale = baseScale + Math.sin(state.clock.elapsedTime) * 0.08 + scrollProgress * 0.15;
-      sphereRef.current.scale.set(scale, scale, scale);
+      const elapsedTime = state.clock.getElapsedTime ? state.clock.getElapsedTime() : state.clock.elapsedTime;
+      const scale = baseScale + Math.sin(elapsedTime) * 0.08 + scrollProgress * 0.15;
+      if (Number.isFinite(scale)) {
+        sphereRef.current.scale.set(scale, scale, scale);
+      }
 
-      // Morph colors based on scroll
-      const color1 = new THREE.Color(sphereColorA);
-      const color2 = new THREE.Color(sphereColorB);
-      const material = sphereRef.current.material as THREE.MeshStandardMaterial;
-      material.color.lerpColors(color1, color2, scrollProgress);
+      // Morph colors based on scroll safely
+      const meshMat = sphereRef.current.material as THREE.MeshStandardMaterial | undefined;
+      if (meshMat && 'color' in meshMat && meshMat.color) {
+        color1.current.set(sphereColorA);
+        color2.current.set(sphereColorB);
+        meshMat.color.lerpColors(color1.current, color2.current, scrollProgress);
+      }
     }
   });
 
@@ -82,7 +100,7 @@ export default function Scene({ containerRef }: SceneProps) {
 
       {/* Floating Particles Swarm */}
       <group ref={groupRef}>
-        <Points positions={particles.current} stride={3} frustumCulled={false}>
+        <Points positions={positions} stride={3} frustumCulled={false}>
           <PointMaterial
             transparent
             color={particleColor}

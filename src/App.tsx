@@ -1,6 +1,6 @@
 import { Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Environment, Preload } from '@react-three/drei';
+import { Preload } from '@react-three/drei';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Menu, X, FileText } from 'lucide-react';
@@ -44,17 +44,16 @@ function AppContent() {
 
       <div
         ref={containerRef}
-        className={`relative w-full h-screen overflow-x-hidden scroll-smooth ${
-          showLoader ? 'overflow-y-hidden pointer-events-none' : 'overflow-y-auto'
-        }`}
+        className={`relative w-full h-screen overflow-x-hidden scroll-smooth ${showLoader ? 'overflow-y-hidden pointer-events-none' : 'overflow-y-auto'
+          }`}
         style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
       >
         {/* 3D Canvas Background */}
         <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
           <Canvas
             camera={{ position: [0, 0, 5], fov: 45 }}
-            dpr={[1, 2]}
-            gl={{ antialias: true, alpha: true }}
+            dpr={[1, 1.5]}
+            gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
           >
             <color attach="background" args={[canvasBg]} />
             <fog attach="fog" args={[canvasBg, 5, 15]} />
@@ -63,7 +62,6 @@ function AppContent() {
 
             <Suspense fallback={null}>
               <Scene containerRef={containerRef} />
-              <Environment preset="city" />
               <Preload all />
             </Suspense>
           </Canvas>
@@ -74,7 +72,7 @@ function AppContent() {
           <Route path="/" element={
             <div className="relative z-10">
               {/* Apple-Style Floating Glass Navigation Bar */}
-              <nav 
+              <nav
                 className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[88%] max-w-5xl z-50 glass rounded-full px-4 sm:px-7 py-2.5 sm:py-3 flex justify-between items-center transition-all duration-300"
                 style={{
                   boxShadow: 'var(--shadow-ambient)',

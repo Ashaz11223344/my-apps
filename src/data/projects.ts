@@ -17,7 +17,7 @@ export const projects: Project[] = [
     description: 'An autonomous desktop OS featuring hands-free voice intelligence, biometric presence sensing, and native Windows & cloud automation.',
     tags: ['AI OS', 'Voice Intelligence', 'Biometrics', 'Python'],
     link: 'https://github.com/Ashaz11223344/convo-ai',
-    color: '#8b5cf6', // Electric Indigo
+    color: '#7c7c7cff', // Electric Indigo
     image: '/convo_animated.svg'
   },
   {
@@ -54,7 +54,7 @@ export const projects: Project[] = [
     description: 'Discover movies that perfectly match your mood and preferences.',
     tags: ['Entertainment', 'Discovery'],
     link: 'https://movie-q-pi.vercel.app/index.html',
-    color: '#f59e0b' // Amber
+    color: '#D81339' // Amber
   },
   {
     id: 'project-vidpull',

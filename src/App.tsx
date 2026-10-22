@@ -1,41 +1,133 @@
-import { Suspense, useRef, useState, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Preload } from '@react-three/drei';
-import { AnimatePresence, motion } from 'framer-motion';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Menu, X, FileText } from 'lucide-react';
-import Scene from './components/canvas/Scene';
+import { useState, useRef } from 'react';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import DynamicGradientBackground from './components/dom/DynamicGradientBackground';
+import Navbar from './components/navigation/Navbar';
 import Hero from './components/dom/Hero';
-import AboutSummary from './components/dom/AboutSummary';
 import ProjectGallery from './components/dom/ProjectGallery';
+import CampaignBlock from './components/dom/CampaignBlock';
+import AboutSummary from './components/dom/AboutSummary';
 import FAQSection from './components/dom/FAQSection';
 import Contact from './components/dom/Contact';
+import Footer from './components/dom/Footer';
 import PageLoader from './components/dom/PageLoader';
 import Resume from './components/dom/Resume';
-import ModeToggle from './components/dom/ModeToggle';
-import { ModeProvider, useModeContext } from './context/ModeContext';
+import TrainedModelsSection from './components/dom/TrainedModelsSection';
+
+// Page slide variants: Direction 1 = Forward (to Resume), Direction -1 = Inverted (back to Portfolio)
+const pageVariants: Variants = {
+  initial: (dir: number) => ({
+    x: dir > 0 ? '35%' : '-35%',
+    opacity: 0,
+  }),
+  animate: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      x: { duration: 0.45, ease: [0.16, 1, 0.3, 1] as const },
+      opacity: { duration: 0.35, ease: 'easeOut' },
+    },
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? '-30%' : '30%',
+    opacity: 0,
+    transition: {
+      x: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
+      opacity: { duration: 0.25, ease: 'easeIn' },
+    },
+  }),
+};
+
+// Directional background light-wave sweep during route transitions
+const bgSweepVariants: Variants = {
+  initial: (dir: number) => ({
+    x: dir > 0 ? '100%' : '-100%',
+    opacity: 0,
+  }),
+  animate: {
+    x: '0%',
+    opacity: [0, 0.22, 0],
+    transition: {
+      x: { duration: 0.65, ease: [0.16, 1, 0.3, 1] as const },
+      opacity: { duration: 0.65, times: [0, 0.35, 1], ease: 'easeInOut' },
+    },
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? '-100%' : '100%',
+    opacity: 0,
+    transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] as const },
+  }),
+};
+
+function PortfolioView() {
+  return (
+    <div className="relative z-10 flex flex-col min-h-screen">
+      {/* Minimalist Fixed Navigation */}
+      <Navbar />
+
+      {/* Main Page Flow */}
+      <main className="flex-1">
+        {/* Hero Section */}
+        <Hero />
+
+        {/* Product Grid & Project Cards & Expanded Project Modal */}
+        <ProjectGallery />
+
+        {/* Trained Small Language Models (SLMs) & Weights Showcase */}
+        <TrainedModelsSection />
+
+        {/* Campaign Block */}
+        <CampaignBlock />
+
+        {/* Profile & Credentials */}
+        <AboutSummary />
+
+        {/* FAQs & SEO Structured Knowledge */}
+        <FAQSection />
+
+        {/* Direct Contact Inquiries */}
+        <Contact />
+      </main>
+
+      {/* 4-Column Brutalist Footer with 10vw Year */}
+      <Footer />
+    </div>
+  );
+}
 
 function AppContent() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [showLoader, setShowLoader] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isDark } = useModeContext();
+  const location = useLocation();
 
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
+  const isResumePath = (p: string) =>
+    p === '/myresume' || p === '/resume' || p === '/credentials';
+
+  // Synchronously compute transition direction between renders
+  const prevPathRef = useRef(location.pathname);
+  const directionRef = useRef(1);
+
+  if (prevPathRef.current !== location.pathname) {
+    const prev = prevPathRef.current;
+    const curr = location.pathname;
+
+    if (isResumePath(curr) && !isResumePath(prev)) {
+      // Forward into Resume (direction = 1)
+      directionRef.current = 1;
+    } else if (!isResumePath(curr) && isResumePath(prev)) {
+      // Inverted back to Portfolio (direction = -1)
+      directionRef.current = -1;
     } else {
-      document.body.style.overflow = '';
+      directionRef.current = 1;
     }
-  }, [mobileMenuOpen]);
+    prevPathRef.current = curr;
+  }
 
-  // Canvas background and fog colors matching current mode
-  const canvasBg = isDark ? '#0f0a1a' : '#f3f0ff';
+  const direction = directionRef.current;
+  const isResume = isResumePath(location.pathname);
 
   return (
     <>
-      {/* Liquid SVG Preloader Screen */}
+      {/* Raw Form Brutalist Preloader Screen */}
       <AnimatePresence mode="wait">
         {showLoader && (
           <PageLoader onComplete={() => setShowLoader(false)} />
@@ -43,192 +135,81 @@ function AppContent() {
       </AnimatePresence>
 
       <div
-        ref={containerRef}
-        className={`relative w-full h-screen overflow-x-hidden scroll-smooth ${showLoader ? 'overflow-y-hidden pointer-events-none' : 'overflow-y-auto'
-          }`}
-        style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
+        className={`relative w-full min-h-screen overflow-x-hidden selection:bg-[#DB4A2B] selection:text-white ${
+          showLoader ? 'overflow-hidden max-h-screen pointer-events-none' : ''
+        }`}
+        style={{
+          backgroundColor: isResume ? '#DDD8CE' : '#E4E2DD',
+          color: '#1E1E1E',
+          transition: 'background-color 1000ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
       >
-        {/* 3D Canvas Background */}
-        <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
-          <Canvas
-            camera={{ position: [0, 0, 5], fov: 45 }}
-            dpr={[1, 1.5]}
-            gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        {/* Dynamic Living Gradient Background with Morphing State */}
+        <DynamicGradientBackground isResume={isResume} />
+
+        {/* Ambient Directional Background Sweep Lighting on Route Transition */}
+        <AnimatePresence custom={direction}>
+          <motion.div
+            key={`bg-lightwave-${isResume ? 'resume' : 'portfolio'}`}
+            custom={direction}
+            variants={bgSweepVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="fixed inset-0 pointer-events-none z-[1]"
+            style={{
+              background:
+                'radial-gradient(ellipse 90% 60% at 50% 50%, rgba(219, 74, 43, 0.18) 0%, rgba(248, 163, 72, 0.12) 45%, transparent 75%)',
+            }}
+          />
+        </AnimatePresence>
+
+        {/* Animated Directional Route Transition */}
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
+          <motion.div
+            key={isResume ? 'resume-view' : 'portfolio-view'}
+            custom={direction}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            onAnimationStart={() => {
+              // Ensure incoming page begins cleanly at top without disturbing outgoing page
+              window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+              document.documentElement.scrollTop = 0;
+              document.body.scrollTop = 0;
+            }}
+            className="w-full min-h-screen"
           >
-            <color attach="background" args={[canvasBg]} />
-            <fog attach="fog" args={[canvasBg, 5, 15]} />
-            <ambientLight intensity={isDark ? 0.6 : 0.95} />
-            <directionalLight position={[10, 10, 5]} intensity={isDark ? 1.2 : 1.6} />
-
-            <Suspense fallback={null}>
-              <Scene containerRef={containerRef} />
-              <Preload all />
-            </Suspense>
-          </Canvas>
-        </div>
-
-        {/* HTML DOM Overlay */}
-        <Routes>
-          <Route path="/" element={
-            <div className="relative z-10">
-              {/* Apple-Style Floating Glass Navigation Bar */}
-              <nav
-                className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[88%] max-w-5xl z-50 glass rounded-full px-4 sm:px-7 py-2.5 sm:py-3 flex justify-between items-center transition-all duration-300"
-                style={{
-                  boxShadow: 'var(--shadow-ambient)',
-                  borderRadius: '9999px',
-                }}
-              >
-                {/* Brand Logo */}
-                <div className="font-space font-bold text-base sm:text-xl tracking-tighter">
-                  <a href="#hero" className="gradient-text uppercase">Ashaz Pathan</a>
-                </div>
-
-                {/* Desktop Menu */}
-                <div className="hidden md:flex gap-1.5 text-xs sm:text-sm font-medium tracking-wide items-center">
-                  <a
-                    href="#hero"
-                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="#about"
-                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#projects"
-                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    Projects
-                  </a>
-                  <a
-                    href="#faq"
-                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    FAQ
-                  </a>
-                  <a
-                    href="#contact"
-                    className="px-3.5 py-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all font-space font-semibold"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    Contact
-                  </a>
-
-                  <ModeToggle />
-
-                  <Link
-                    to="/myresume"
-                    className="gradient-btn px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-all duration-300 hover:scale-105 shadow-md ml-1"
-                  >
-                    RESUME
-                  </Link>
-                </div>
-
-                {/* Mobile Right Quick Action Group */}
-                <div className="flex md:hidden items-center gap-2">
-                  <ModeToggle />
-                  <button
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="p-2 rounded-full glass cursor-pointer flex items-center justify-center transition-all duration-200"
-                    aria-label="Toggle menu"
-                    style={{ width: '38px', height: '38px', borderRadius: '9999px' }}
-                  >
-                    {mobileMenuOpen ? (
-                      <X className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
-                    ) : (
-                      <Menu className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
-                    )}
-                  </button>
-                </div>
-              </nav>
-
-              {/* Mobile Drawer Overlay */}
-              <AnimatePresence>
-                {mobileMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                    className="fixed top-20 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-40 md:hidden p-6 glass-elevated rounded-3xl flex flex-col gap-6 shadow-2xl"
-                    style={{ background: 'var(--glass-light)', backdropFilter: 'var(--backdrop-blur)' }}
-                  >
-                    <div className="flex flex-col gap-3">
-                      <a
-                        href="#hero"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                        style={{ color: 'var(--text-primary)' }}
-                      >
-                        Home
-                      </a>
-                      <a
-                        href="#about"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                        style={{ color: 'var(--text-primary)' }}
-                      >
-                        About
-                      </a>
-                      <a
-                        href="#projects"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                        style={{ color: 'var(--text-primary)' }}
-                      >
-                        Projects
-                      </a>
-                      <a
-                        href="#faq"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                        style={{ color: 'var(--text-primary)' }}
-                      >
-                        FAQ
-                      </a>
-                      <a
-                        href="#contact"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-lg font-space font-bold py-2 px-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                        style={{ color: 'var(--text-primary)' }}
-                      >
-                        Contact
-                      </a>
-                    </div>
-
-                    <div className="pt-2">
-                      <Link
-                        to="/myresume"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="gradient-btn w-full py-3.5 rounded-full flex items-center justify-center gap-2 text-sm font-bold tracking-wider uppercase shadow-lg"
-                      >
-                        <FileText className="w-4 h-4" />
-                        View Full Resume
-                      </Link>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <main>
-                <Hero />
-                <AboutSummary />
-                <ProjectGallery />
-                <FAQSection />
-                <Contact />
-              </main>
-            </div>
-          } />
-          <Route path="/myresume" element={<Resume />} />
-        </Routes>
+            <Routes location={location}>
+              <Route path="/" element={<PortfolioView />} />
+              <Route
+                path="/myresume"
+                element={
+                  <div className="relative z-10 flex flex-col min-h-screen">
+                    <Resume />
+                  </div>
+                }
+              />
+              <Route
+                path="/resume"
+                element={
+                  <div className="relative z-10 flex flex-col min-h-screen">
+                    <Resume />
+                  </div>
+                }
+              />
+              <Route
+                path="/credentials"
+                element={
+                  <div className="relative z-10 flex flex-col min-h-screen">
+                    <Resume />
+                  </div>
+                }
+              />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </>
   );
@@ -237,9 +218,7 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <ModeProvider>
-        <AppContent />
-      </ModeProvider>
+      <AppContent />
     </BrowserRouter>
   );
 }

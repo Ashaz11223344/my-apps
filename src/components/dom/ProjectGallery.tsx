@@ -1,14 +1,17 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
-import { motion, useScroll, useTransform, useMotionValue, useMotionTemplate, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { projects, type Project } from '../../data/projects';
-import { X, ExternalLink, Maximize2, Monitor, AlertTriangle } from 'lucide-react';
-import { getProjectAvailability } from '../../features/projectAvailability';
 import {
-  UnavailablePreviewScreen,
-  ProjectAvailabilityBadge,
-  UnavailableNoticeModal,
-  PreservedProjectDetailModal
-} from './UnavailableProjectView';
+  X,
+  ExternalLink,
+  Maximize2,
+  AlertTriangle,
+  ArrowUpRight,
+  Sparkles
+} from 'lucide-react';
+import { getProjectAvailability } from '../../features/projectAvailability';
+import CategoryDivider from './CategoryDivider';
+import ConvoFeaturesModal from './ConvoFeaturesModal';
 
 const GithubIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -17,8 +20,24 @@ const GithubIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 );
 
 export default function ProjectGallery() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [expandedProject, setExpandedProject] = useState<Project | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('ALL');
+
+  // Categories for brutalist filter tabs
+  const categories = ['ALL', 'AI & OS', 'WEB APPS', 'TOOLS', 'CREATIVE'];
+
+  // Filter projects by category
+  const filteredProjects = useMemo(() => {
+    if (activeCategory === 'ALL') return projects;
+    return projects.filter((p) => {
+      const tagsStr = p.tags.join(' ').toLowerCase();
+      if (activeCategory === 'AI & OS') return tagsStr.includes('ai') || tagsStr.includes('os') || tagsStr.includes('voice');
+      if (activeCategory === 'WEB APPS') return tagsStr.includes('web app') || tagsStr.includes('architect') || tagsStr.includes('entertainment');
+      if (activeCategory === 'TOOLS') return tagsStr.includes('tool') || tagsStr.includes('productivity') || tagsStr.includes('security');
+      if (activeCategory === 'CREATIVE') return tagsStr.includes('creative') || tagsStr.includes('personal') || tagsStr.includes('design');
+      return true;
+    });
+  }, [activeCategory]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -41,17 +60,56 @@ export default function ProjectGallery() {
 
   return (
     <>
-      <section id="projects" ref={containerRef} className="py-16 sm:py-32 px-4 sm:px-6 md:px-24 relative z-10 pointer-events-auto">
+      {/* Category Divider 01 before the Product Grid */}
+      <CategoryDivider
+        number="01"
+        title="SELECTED WORK"
+        align="right"
+        id="projects-divider"
+      />
+
+      <section id="projects" className="py-20 sm:py-28 px-4 sm:px-8 md:px-16 lg:px-24 relative select-none">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-12 sm:mb-24">
-            <p className="text-xs sm:text-sm tracking-[0.2em] text-accent-primary font-space uppercase mb-2 sm:mb-4">Selected Work</p>
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-space font-bold" style={{ color: 'var(--text-primary)' }}>
-              Featured <span className="gradient-text italic">Projects</span>
-            </h2>
+          {/* Header & Category Filter Tabs */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-14 pb-8 border-b border-[#1E1E1E]/20">
+            <div>
+              <div className="inline-flex flex-wrap items-center gap-2 mb-3">
+                <span className="w-2 h-2 bg-[#DB4A2B]" />
+                <span className="font-satoshi text-xs sm:text-sm font-bold tracking-[0.2em] text-[#DB4A2B] uppercase">
+                  Production Applications & Systems
+                </span>
+                <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 bg-emerald-500/10 text-emerald-700 border border-emerald-500/30">
+                  Preloaded &amp; Cached in Browser
+                </span>
+              </div>
+              <h2 className="font-clash text-3xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-[-0.05em] text-[#1E1E1E]">
+                PROJECTS CATALOG
+              </h2>
+            </div>
+
+            {/* Brutalist Filter Tabs */}
+            <div className="flex flex-wrap items-center gap-2">
+              {categories.map((cat) => {
+                const isActive = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-4 py-2 font-satoshi text-xs font-bold uppercase tracking-[0.1em] border border-[#1E1E1E] transition-all cursor-pointer ${isActive
+                        ? 'bg-[#1E1E1E] text-[#E4E2DD]'
+                        : 'bg-transparent text-[#1E1E1E] hover:bg-[#D9D6D0]'
+                      }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-12 sm:gap-24 md:gap-32">
-            {projects.map((project, index) => (
+          {/* 1 on 1 Project Showcase: Project Card -> Project Details */}
+          <div className="flex flex-col gap-16 sm:gap-24">
+            {filteredProjects.map((project, index) => (
               <ProjectCard
                 key={project.id}
                 project={project}
@@ -63,7 +121,7 @@ export default function ProjectGallery() {
         </div>
       </section>
 
-      {/* Full-Screen Expanded Modal */}
+      {/* Full-Screen Raw Form Brutalist Project Detail Modal */}
       <AnimatePresence>
         {expandedProject && (
           <ExpandedProjectModal
@@ -76,431 +134,319 @@ export default function ProjectGallery() {
   );
 }
 
-/* ─── Project Card with Interactive Preview & Availability Awareness ─── */
-function ProjectCard({ project, index, onExpand }: { project: Project; index: number; onExpand: () => void }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const iframeContainerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"]
-  });
+/* ─────────────────────────────────────────────────────────────
+   Brutalist 1-on-1 Project Showcase Item
+   Layout: Project Card (Left) -> Project Details (Right)
+   ───────────────────────────────────────────────────────────── */
+interface ProjectCardProps {
+  project: Project;
+  index: number;
+  onExpand: () => void;
+}
 
-  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
+function ProjectCard({ project, onExpand }: ProjectCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [iframeScale, setIframeScale] = useState(0.35);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [scale, setScale] = useState(0.45);
   const [containerHeight, setContainerHeight] = useState(0);
-  const [showNoticeModal, setShowNoticeModal] = useState(false);
+  const [isInView, setIsInView] = useState(false);
 
-  // Fetch project availability state by ID
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const availability = getProjectAvailability(project.id);
   const isUnavailable = availability.flag === 'Unavailable';
 
+  // Only observe & mount iframe when approaching viewport (prevents lag & memory spikes)
   useEffect(() => {
-    if (isUnavailable || isMobile) return;
-    const container = iframeContainerRef.current;
-    if (!container) return;
+    const el = cardRef.current;
+    if (!el) return;
 
-    const IFRAME_WIDTH = 1440;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.unobserve(el);
+          }
+        });
+      },
+      { rootMargin: '350px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Compute precise scaling to make standard 1280px desktop site fill 16/10 card frame perfectly
+  useEffect(() => {
+    if (project.image || isUnavailable) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     const updateScale = () => {
       const { width, height } = container.getBoundingClientRect();
-      if (width > 0) {
-        setIframeScale(width / IFRAME_WIDTH);
+      if (width > 0 && height > 0) {
+        setScale(width / 1280);
         setContainerHeight(height);
       }
     };
 
     updateScale();
-
-    const resizeObserver = new ResizeObserver(updateScale);
-    resizeObserver.observe(container);
-    return () => resizeObserver.disconnect();
-  }, [isUnavailable, isMobile]);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
-  const isEven = index % 2 === 0;
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-    if (isMobile) return;
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  }
-
-  const background = useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, ${project.color}30, transparent 80%)`;
-  const iframeVirtualHeight = 900;
-  const translateYVirtual = iframeScale > 0 && containerHeight > 0
-    ? (containerHeight / iframeScale - iframeVirtualHeight) / 2
-    : 0;
+    const ro = new ResizeObserver(updateScale);
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [project.image, isUnavailable]);
 
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 40 }}
+      id={project.id}
+      initial={{ opacity: 0, y: 35 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`project-card flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 sm:gap-8 md:gap-16 items-center`}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative flex flex-col lg:flex-row gap-8 lg:gap-12 items-stretch border-b border-[#1E1E1E]/20 pb-16 transition-all"
     >
-      {/* Live Website Preview or Interactive Maintenance Standby */}
-      <motion.div
-        style={isMobile ? undefined : { y }}
-        className="w-full md:w-[55%] aspect-[16/10] rounded-2xl relative overflow-hidden group cursor-pointer shrink-0 self-center"
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={onExpand}
-      >
-        {/* Outer glow border */}
+      {/* LEFT: Project Card (Preview Frame with 16/10 aspect ratio) */}
+      <div className="w-full lg:w-[56%] shrink-0 flex flex-col">
         <div
-          className="absolute -inset-[1px] rounded-2xl z-0 opacity-60 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            background: isUnavailable
-              ? `linear-gradient(135deg, rgba(245, 158, 11, 0.6), transparent 40%, transparent 60%, ${project.color}40)`
-              : `linear-gradient(135deg, ${project.color}50, transparent 40%, transparent 60%, ${project.color}30)`,
-          }}
-        />
-
-        {/* Inner glass card */}
-        <div
-          className="absolute inset-[1px] rounded-2xl overflow-hidden z-[1]"
-          style={{ background: 'var(--bg-inset)' }}
+          onClick={onExpand}
+          className="relative w-full aspect-[16/10] bg-[#D9D6D0] border-2 border-[#1E1E1E] shadow-[6px_6px_0px_#1E1E1E] overflow-hidden cursor-pointer select-none flex flex-col transition-all duration-300 group-hover:shadow-[8px_8px_0px_#DB4A2B]"
         >
-          {/* Browser Chrome Bar */}
-          <div
-            className="h-8 flex items-center px-3 gap-2 border-b relative z-30 shrink-0"
-            style={{ background: 'var(--glass-dark)', borderColor: 'var(--glass-border)' }}
-          >
-            <div className="flex gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-              <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-              <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+          {/* Top Browser / OS Chrome Bar */}
+          <div className="h-9 bg-[#1E1E1E] text-[#E4E2DD] px-4 flex items-center justify-between text-xs font-mono shrink-0 z-20">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: project.color }} />
+              <span className="font-bold">№ {project.number}</span>
             </div>
-            <div className="flex-1 mx-2">
-              <div
-                className="rounded-md px-3 py-0.5 text-[10px] truncate max-w-[160px] sm:max-w-xs mx-auto text-center font-mono flex items-center justify-center gap-1.5"
-                style={{ background: 'var(--bg-base)', color: isUnavailable ? '#fbbf24' : 'var(--text-tertiary)' }}
-              >
-                {isUnavailable && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />}
-                <span>{project.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
-              </div>
+
+            <span className="truncate max-w-[200px] sm:max-w-[300px] opacity-75 font-mono text-[11px]">
+              {project.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              {isUnavailable ? (
+                <span className="text-amber-400 font-bold text-[11px]">[OFFLINE]</span>
+              ) : (
+                <span className="text-emerald-400 font-bold text-[11px]">[READY]</span>
+              )}
             </div>
-            <Monitor className="w-3 h-3" style={{ color: 'var(--text-tertiary)' }} />
           </div>
 
-          {/* Interactive Screen Area */}
-          {isUnavailable ? (
-            <UnavailablePreviewScreen
-              project={project}
-              metadata={availability}
-              onExpand={onExpand}
-              isHovered={isHovered}
-            />
-          ) : project.image ? (
-            /* Screenshot Image Preview (Convo AI Desktop OS Mode) */
-            <div
-              className="relative w-full h-[calc(100%-2rem)] overflow-hidden bg-[#0d0c0b] flex items-center justify-center group/img cursor-pointer"
-              onClick={onExpand}
-            >
-              <img
-                src={project.image}
-                alt={`${project.title} Interface Preview`}
-                className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover/img:scale-105"
-                loading="eager"
-              />
-              {!project.image?.endsWith('.svg') && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-              )}
-
-              {/* Hover / Tap overlay */}
-              <motion.div
-                className="absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-300 pointer-events-none"
-                style={{
-                  background: 'rgba(0, 0, 0, 0.45)',
-                  backdropFilter: 'blur(3px)',
-                  opacity: isHovered ? 1 : 0
-                }}
-              >
-                <div
-                  className="flex flex-col items-center gap-2 transform transition-transform duration-300"
-                  style={{ transform: isHovered ? 'scale(1)' : 'scale(0.9)' }}
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center border border-white/30 shadow-lg"
-                    style={{ background: `${project.color}70` }}
-                  >
-                    <Maximize2 className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-white text-xs font-semibold tracking-wider uppercase font-space">
-                    Expand Preview
-                  </span>
+          {/* Inner Content Area */}
+          <div className="relative flex-1 w-full h-[calc(100%-2.25rem)] overflow-hidden transition-transform duration-500 ease-out group-hover:scale-[1.02]">
+            {/* Convo AI Animated Vector SVG Preview */}
+            {project.image ? (
+              <div className="w-full h-full bg-[#0d0c0b] flex items-center justify-center p-6">
+                <img
+                  src={project.image}
+                  alt={`${project.title} Interface`}
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ) : isUnavailable ? (
+              /* Unavailable Standby Poster */
+              <div className="w-full h-full bg-[#E4E2DD] flex flex-col items-center justify-center p-8 text-center border-t border-[#1E1E1E]/10">
+                <div className="w-16 h-16 border-2 border-amber-500 bg-amber-500/10 flex items-center justify-center mb-4">
+                  <AlertTriangle className="w-8 h-8 text-amber-600" />
                 </div>
-              </motion.div>
-            </div>
-          ) : isMobile ? (
-            /* Mobile-Optimized Lightweight Native Preview (Prevents mobile tab crashes from 12 concurrent iframes) */
-            <div
-              className="relative w-full h-[calc(100%-2rem)] flex flex-col items-center justify-center p-6 text-center select-none overflow-hidden cursor-pointer"
-              style={{
-                background: 'radial-gradient(ellipse at 50% 40%, rgba(26, 18, 40, 0.95) 0%, rgba(12, 8, 20, 0.98) 100%)'
-              }}
-              onClick={onExpand}
-            >
-              {/* Subtle ambient glow in project brand color */}
-              <div
-                className="absolute w-44 h-44 rounded-full blur-3xl opacity-25 pointer-events-none"
-                style={{ background: project.color }}
-              />
-
-              <div className="relative z-10 flex flex-col items-center max-w-sm mx-auto px-4">
-                {/* Monogram Badge */}
-                <div
-                  className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-3 border border-white/10 shadow-lg"
-                  style={{
-                    background: `linear-gradient(135deg, ${project.color}35, rgba(255, 255, 255, 0.05))`,
-                    boxShadow: `0 8px 30px ${project.color}35`
-                  }}
-                >
-                  <span className="text-2xl font-space font-bold text-white">
-                    {project.title.charAt(0)}
-                  </span>
-                  <span
-                    className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-[#120814] flex items-center justify-center"
-                    style={{ background: '#22c55e' }}
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                  </span>
-                </div>
-
-                <h4 className="font-space font-bold text-base text-white mb-1">
+                <span className="font-mono text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">
+                  Scheduled Maintenance
+                </span>
+                <h4 className="font-clash font-bold text-2xl uppercase tracking-[0.03em] text-[#1E1E1E] mb-2">
                   {project.title}
                 </h4>
-
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="flex items-center gap-1.5 text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-green-500/20 text-green-300 border border-green-500/30 uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                    Online & Active
-                  </span>
-                </div>
-
-                {/* Tap to Preview CTA */}
-                <div
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-space font-semibold text-white shadow-md active:scale-95 transition-transform"
-                  style={{
-                    background: `linear-gradient(135deg, ${project.color}, ${project.color}cc)`
-                  }}
-                >
-                  <Maximize2 className="w-3.5 h-3.5" />
-                  <span>Interactive Preview</span>
-                </div>
+                <p className="font-satoshi text-xs text-[#666666] max-w-[280px]">
+                  Undergoing container & pipeline migration. Click to inspect specs.
+                </p>
               </div>
-            </div>
-          ) : (
-            /* Desktop View: Interactive Scaled Iframe */
-            <div ref={iframeContainerRef} className="relative w-full h-[calc(100%-2rem)] overflow-hidden">
-              {/* Loading skeleton while website preview is loading */}
-              {!iframeLoaded && (
-                <div
-                  className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 sm:p-6 text-center"
-                  style={{ background: 'var(--bg-inset)' }}
-                >
-                  <div
-                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 animate-pulse"
-                    style={{
-                      background: `linear-gradient(135deg, ${project.color}20, ${project.color}40)`,
-                      border: `1px solid ${project.color}50`,
-                      boxShadow: `0 0 20px ${project.color}20`
-                    }}
-                  >
-                    <span className="text-xl sm:text-2xl font-bold font-space" style={{ color: project.color }}>
-                      {project.title.charAt(0)}
+            ) : (
+              /* Live Scaled Website Preview Iframe with Lazy Loading & Fallback */
+              <div ref={containerRef} className="relative w-full h-full bg-[#E4E2DD] overflow-hidden">
+                {/* Loading State & Skeleton */}
+                {!iframeLoaded && (
+                  <div className="absolute inset-0 z-10 bg-[#E4E2DD] flex flex-col items-center justify-center p-6 text-center">
+                    <div
+                      className="w-16 h-16 border-2 border-[#1E1E1E] flex items-center justify-center mb-3 shadow-[4px_4px_0px_#1E1E1E]"
+                      style={{ backgroundColor: `${project.color}25` }}
+                    >
+                      <span className="font-clash font-bold text-3xl" style={{ color: project.color }}>
+                        {project.title.charAt(0)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <div
+                        className="w-4 h-4 border-2 border-[#1E1E1E] border-t-transparent rounded-full animate-spin"
+                        style={{ borderTopColor: project.color }}
+                      />
+                      <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E1E1E]">
+                        Connecting Live Deployment...
+                      </span>
+                    </div>
+                    <span className="font-mono text-xs text-[#666666] truncate max-w-[240px]">
+                      {project.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}
                     </span>
                   </div>
-                  <h4 className="font-space font-medium text-xs sm:text-sm mb-1" style={{ color: 'var(--text-primary)' }}>{project.title}</h4>
-                  <div
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[9px] sm:text-[10px] uppercase tracking-wider font-space mt-1"
+                )}
+
+                {/* Actual Iframe with Native Lazy Loading & Viewport Observer */}
+                {isInView && (
+                  <iframe
+                    src={project.link}
+                    title={`${project.title} live preview`}
+                    className="absolute top-0 left-0 border-none transition-opacity duration-500 ease-out"
                     style={{
-                      borderColor: `${project.color}50`,
-                      background: `${project.color}15`,
-                      color: 'var(--text-secondary)'
+                      width: '1280px',
+                      height: `${scale > 0 && containerHeight > 0 ? containerHeight / scale : 1000}px`,
+                      transform: `scale(${scale})`,
+                      transformOrigin: 'top left',
+                      pointerEvents: 'none',
+                      opacity: iframeLoaded ? 1 : 0,
                     }}
-                  >
-                    <div
-                      className="w-3 h-3 rounded-full border-2 border-transparent animate-spin"
-                      style={{ borderTopColor: project.color, borderRightColor: `${project.color}50` }}
-                    />
-                    Loading Preview...
-                  </div>
-                </div>
-              )}
+                    sandbox="allow-scripts allow-same-origin allow-popups"
+                    loading="lazy"
+                    onLoad={() => setIframeLoaded(true)}
+                  />
+                )}
+              </div>
+            )}
 
-              {/* Actual Iframe — Loads lazily on desktop */}
-              <iframe
-                src={project.link}
-                title={`${project.title} preview`}
-                className="absolute top-0 left-0 border-none transition-opacity duration-700 ease-out"
-                style={{
-                  width: '1440px',
-                  height: `${iframeVirtualHeight}px`,
-                  transform: `scale(${iframeScale}) translateY(${translateYVirtual}px)`,
-                  transformOrigin: 'top left',
-                  pointerEvents: 'none',
-                  opacity: iframeLoaded ? 1 : 0,
-                }}
-                sandbox="allow-scripts allow-same-origin allow-popups"
-                loading="lazy"
-                onLoad={() => setIframeLoaded(true)}
-              />
-
-              {/* Hover / Tap overlay */}
-              <motion.div
-                className="absolute inset-0 z-10 flex items-center justify-center"
-                initial={false}
-                animate={{ opacity: isHovered && iframeLoaded ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-                <motion.div
-                  className="relative flex flex-col items-center gap-2 sm:gap-3"
-                  initial={false}
-                  animate={{ y: isHovered ? 0 : 10, scale: isHovered ? 1 : 0.9 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div
-                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border border-white/30"
-                    style={{ background: `${project.color}40` }}
-                  >
-                    <Maximize2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <span className="text-white text-xs sm:text-sm font-medium tracking-wider uppercase font-space">
-                    Expand Preview
-                  </span>
-                </motion.div>
-              </motion.div>
-            </div>
-          )}
-        </div>
-
-        {/* Interactive hover glow */}
-        <motion.div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[2] rounded-2xl"
-          style={{ background }}
-        />
-      </motion.div>
-
-      {/* Info Section — Full Details Preserved */}
-      <div
-        className="w-full md:w-[45%] flex flex-col justify-center p-6 sm:p-8 md:p-12 glass-card relative z-20"
-      >
-        <span className="text-5xl sm:text-6xl md:text-8xl font-space font-black mb-2 sm:mb-4" style={{ color: 'var(--accent-tertiary)', opacity: 0.35 }}>
-          {project.number}
-        </span>
-
-        {/* Interactive Availability Indicator for Unavailable Projects */}
-        {isUnavailable && (
-          <ProjectAvailabilityBadge
-            metadata={availability}
-            onInfoClick={onExpand}
-          />
-        )}
-
-        <h3 className="text-2xl sm:text-3xl md:text-4xl font-space font-bold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>
-          {project.title}
-        </h3>
-        <p className="text-base sm:text-lg mb-6 sm:mb-8 max-w-md leading-relaxed font-inter" style={{ color: 'var(--text-secondary)' }}>
-          {project.description}
-        </p>
-
-        <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
-          {project.tags.map((tag: string) => (
-            <span
-              key={tag}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium tracking-wide glass-inset"
-              style={{
-                borderRadius: '9999px',
-                color: 'var(--text-secondary)',
-              }}
+            {/* Hover Overlay with Expand Specs CTA */}
+            <div
+              className={`absolute inset-0 z-30 bg-[#1E1E1E]/50 backdrop-blur-xs flex flex-col items-center justify-center transition-opacity duration-300 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'
+                }`}
             >
-              {tag}
+              <div className="bg-[#E4E2DD] text-[#1E1E1E] px-5 py-2.5 border-2 border-[#1E1E1E] shadow-[4px_4px_0px_#DB4A2B] flex items-center gap-2 font-satoshi font-bold text-xs uppercase tracking-[0.1em]">
+                <Maximize2 className="w-4 h-4 text-[#DB4A2B]" />
+                <span>Expand Project Specs & Live View</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: Project Details (Project Card -> Project Details) */}
+      <div className="w-full lg:w-[44%] flex flex-col justify-between py-1">
+        <div>
+          {/* Top info line: Project number without "ACTIVE SYSTEM" text */}
+          <div className="flex items-center justify-between text-xs font-mono uppercase text-[#444444] mb-3">
+            <span className="font-bold text-[#DB4A2B]">SYSTEM PROFILE // № {project.number}</span>
+            {isUnavailable ? (
+              <span className="text-amber-600 font-bold px-2 py-0.5 bg-amber-500/10 border border-amber-600/30">
+                MAINTENANCE
+              </span>
+            ) : (
+              <span className="text-emerald-700 font-bold px-2 py-0.5 bg-emerald-500/10 border border-emerald-600/30">
+                LIVE PRODUCTION
+              </span>
+            )}
+          </div>
+
+          {/* Product/Project Name: Bold uppercase Clash Display.
+              Hover state dynamically changes color to project.color! */}
+          <h3
+            onClick={onExpand}
+            style={{ color: isHovered ? project.color : '#1E1E1E' }}
+            className="font-clash font-bold text-2xl sm:text-3xl lg:text-4xl uppercase tracking-[0.03em] cursor-pointer mb-4 transition-colors duration-200"
+          >
+            {project.title}
+          </h3>
+
+          {/* Detailed Description */}
+          <p className="font-satoshi text-sm sm:text-base text-[#333333] leading-relaxed mb-6 font-medium">
+            {project.description}
+          </p>
+
+          {/* Technical Architecture & Blueprint Block */}
+          <div className="p-4 bg-[#D9D6D0] border-2 border-[#1E1E1E] shadow-[3px_3px_0px_#1E1E1E] mb-6">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#DB4A2B] block mb-1">
+              // TECHNICAL BLUEPRINT
             </span>
-          ))}
+            <p className="font-satoshi text-xs text-[#444444] leading-relaxed">
+              {project.image
+                ? "Autonomous voice-driven desktop intelligence featuring local neural processing, real-time presence detection, and native OS automation."
+                : isUnavailable
+                  ? availability.detailedMessage
+                  : "Engineered for high client responsiveness, isolated sandboxed computation, and instant deployment."}
+            </p>
+          </div>
+
+          {/* Tags in brutalist badges */}
+          <div className="mb-6">
+            <span className="font-satoshi text-xs font-bold uppercase tracking-wider text-[#666666] block mb-2">
+              Integrated Technologies
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="font-mono text-xs uppercase px-2.5 py-1 border border-[#1E1E1E] bg-[#E4E2DD] text-[#1E1E1E] font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-3 pt-5 border-t border-[#1E1E1E]/20 mt-auto">
           <button
             onClick={onExpand}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-white font-medium transition-all duration-300 hover:scale-105 cursor-pointer w-full sm:w-auto justify-center text-center"
-            style={{ background: `linear-gradient(135deg, ${project.color}, ${project.color}bb)`, borderRadius: '0.75rem' }}
+            className="btn-raw flex-1 py-3 px-5 text-xs font-bold uppercase tracking-wider text-center justify-center cursor-pointer"
           >
-            <Maximize2 className="w-4 h-4" />
-            {isUnavailable ? 'Project Specs & Status' : 'Full Preview'}
+            <Maximize2 className="w-4 h-4 mr-1.5" />
+            <span>Specs & Detail</span>
           </button>
 
-          {isUnavailable ? (
-            <button
-              onClick={() => setShowNoticeModal(true)}
-              className="inline-flex items-center gap-2 px-6 py-3.5 glass rounded-xl font-medium transition-all duration-300 hover:scale-105 w-full sm:w-auto justify-center text-center cursor-pointer"
-              style={{
-                color: '#fbbf24',
-                borderRadius: '0.75rem',
-                border: '1px solid rgba(245, 158, 11, 0.4)'
-              }}
+          {project.image ? (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View ${project.title} on GitHub`}
+              className="py-3 px-5 border-2 border-[#1E1E1E] bg-[#E4E2DD] hover:bg-[#1E1E1E] hover:text-white transition-all font-satoshi font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-[3px_3px_0px_#1E1E1E]"
+              title="GitHub Repository"
             >
-              <AlertTriangle className="w-4 h-4 text-amber-400" />
-              Offline Notice
-            </button>
+              <GithubIcon className="w-4 h-4" />
+              <span>GitHub Repository</span>
+            </a>
           ) : (
             <a
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3.5 glass rounded-xl font-medium transition-all duration-300 hover:scale-105 w-full sm:w-auto justify-center text-center group"
-              style={{ color: 'var(--text-primary)', borderRadius: '0.75rem' }}
+              aria-label={`Visit ${project.title} site`}
+              className="py-3 px-5 border-2 border-[#1E1E1E] bg-[#E4E2DD] hover:bg-[#1E1E1E] hover:text-white transition-all font-satoshi font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-[3px_3px_0px_#1E1E1E]"
+              title="Direct Live Link"
             >
-              {project.image ? (
-                <>
-                  <GithubIcon className="w-4 h-4 text-accent-primary group-hover:scale-110 transition-transform" />
-                  <span>View Project</span>
-                </>
-              ) : (
-                <>
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Visit Site</span>
-                </>
-              )}
+              <span>Visit Production App</span>
+              <ExternalLink className="w-4 h-4" />
             </a>
           )}
         </div>
-
-        {/* Offline Notice Modal for Unavailable Projects */}
-        {isUnavailable && (
-          <UnavailableNoticeModal
-            project={project}
-            metadata={availability}
-            isOpen={showNoticeModal}
-            onClose={() => setShowNoticeModal(false)}
-            onOpenDetails={onExpand}
-          />
-        )}
       </div>
     </motion.div>
   );
 }
 
-/* ─── Full-Screen Expanded Modal with Preserved Project Details ─── */
-function ExpandedProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
+/* ─────────────────────────────────────────────────────────────
+   Full-Screen Raw Form Brutalist Project Detail Modal
+   Preserves all project details, live iframe preview, architecture,
+   tech stack, offline maintenance info, and external links!
+   ───────────────────────────────────────────────────────────── */
+interface ExpandedProjectModalProps {
+  project: Project;
+  onClose: () => void;
+}
+
+function ExpandedProjectModal({ project, onClose }: ExpandedProjectModalProps) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [showFeaturesModal, setShowFeaturesModal] = useState(false);
   const availability = getProjectAvailability(project.id);
   const isUnavailable = availability.flag === 'Unavailable';
 
@@ -510,153 +456,262 @@ function ExpandedProjectModal({ project, onClose }: { project: Project; onClose:
 
   return (
     <motion.div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-6"
-      onClick={handleBackdropClick}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      onClick={handleBackdropClick}
+      className="fixed inset-0 z-50 bg-[#1E1E1E]/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-6 overflow-y-auto"
     >
-      {/* Backdrop */}
       <motion.div
-        className="absolute inset-0 bg-black/80 backdrop-blur-xl"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      />
-
-      {/* Modal Content */}
-      <motion.div
-        className="relative w-full h-full max-w-6xl max-h-[96vh] sm:max-h-[92vh] rounded-xl sm:rounded-2xl overflow-hidden flex flex-col glass-elevated"
-        style={{
-          boxShadow: isUnavailable
-            ? `0 0 100px rgba(245, 158, 11, 0.25), var(--shadow-ambient)`
-            : `0 0 100px ${project.color}30, var(--shadow-ambient)`
-        }}
-        initial={{ scale: 0.9, y: 30, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.9, y: 30, opacity: 0 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        initial={{ scale: 0.95, y: 30 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.95, y: 30 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-6xl max-h-[94vh] bg-[#E4E2DD] border-2 border-[#1E1E1E] shadow-[8px_8px_0px_#1E1E1E] flex flex-col overflow-hidden text-[#1E1E1E]"
       >
-        {/* Top Bar */}
-        <div
-          className="h-12 flex items-center justify-between px-3 sm:px-4 shrink-0 border-b gap-2"
-          style={{ background: 'var(--glass-dark)', borderColor: 'var(--glass-border)' }}
-        >
-          {/* Left: Traffic Lights & Title */}
-          <div className="flex items-center gap-2 sm:gap-4 truncate">
-            <div className="flex gap-1.5 shrink-0">
+        {/* Modal Top Header Bar */}
+        <div className="h-14 bg-[#1E1E1E] text-[#E4E2DD] px-4 sm:px-6 flex items-center justify-between border-b border-[#1E1E1E] shrink-0 gap-3">
+          {/* Left: Project Number & Title */}
+          <div className="flex items-center gap-3 truncate">
+            <span className="font-mono text-xs font-bold text-[#DB4A2B] px-2 py-0.5 border border-[#DB4A2B]">
+              № {project.number}
+            </span>
+            <h3 className="font-clash font-bold text-lg sm:text-xl uppercase tracking-tight truncate text-[#E4E2DD]">
+              {project.title}
+            </h3>
+            {isUnavailable ? (
+              <span className="hidden sm:inline-block font-mono text-[10px] uppercase px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                Maintenance
+              </span>
+            ) : (
+              <span className="hidden sm:inline-block font-mono text-[10px] uppercase px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                Online &amp; Active
+              </span>
+            )}
+          </div>
+
+          {/* Right: View detailed Features (Only Convo AI) + Visit + Close */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {project.id === 'project-convo' && (
               <button
-                onClick={onClose}
-                className="w-3.5 h-3.5 rounded-full bg-[#ff5f57] hover:bg-[#ff3b30] transition-colors cursor-pointer flex items-center justify-center group"
-                title="Close"
+                onClick={() => setShowFeaturesModal(true)}
+                title="View detailed Features"
+                className="flex items-center gap-1.5 font-mono text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 bg-[#8b5cf6] text-white hover:bg-white hover:text-[#1E1E1E] transition-all cursor-pointer font-bold border border-[#8b5cf6] shadow-[2px_2px_0px_#1E1E1E] shrink-0"
               >
-                <X className="w-2 h-2 text-[#990000] opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">View detailed Features</span>
+                <span className="sm:hidden">Detailed Features</span>
               </button>
-              <div className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e]" />
-              <div className="w-3.5 h-3.5 rounded-full bg-[#28c840]" />
-            </div>
-            <div className="flex items-center gap-2 truncate">
-              <div
-                className="w-4 h-4 rounded flex items-center justify-center text-[8px] font-bold text-white shrink-0"
-                style={{ background: project.color }}
-              >
-                {project.title.charAt(0)}
-              </div>
-              <span className="text-xs sm:text-sm font-medium font-space truncate" style={{ color: 'var(--text-primary)' }}>
-                {project.title}
-              </span>
-              {isUnavailable && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider shrink-0">
-                  Maintenance
-                </span>
-              )}
-            </div>
-          </div>
+            )}
 
-          {/* Center: URL Bar (Desktop/Tablet) */}
-          <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex">
-            <div
-              className="rounded-lg px-4 py-1.5 flex items-center gap-2 border min-w-[280px] md:min-w-[380px]"
-              style={{ background: 'var(--bg-base)', borderColor: 'var(--glass-border)' }}
-            >
-              <div className={`w-3 h-3 rounded-full border ${isUnavailable ? 'border-amber-500' : 'border-green-500'} flex items-center justify-center`}>
-                <div className={`w-1.5 h-1.5 rounded-full ${isUnavailable ? 'bg-amber-400' : 'bg-green-400'}`} />
-              </div>
-              <span className="text-xs font-mono truncate" style={{ color: 'var(--text-tertiary)' }}>
-                {project.link} {isUnavailable ? '[Offline]' : ''}
-              </span>
-            </div>
-          </div>
-
-          {/* Right: Actions */}
-          <div className="flex items-center gap-2 shrink-0">
             <a
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs font-medium px-2.5 sm:px-3 py-1.5 rounded-lg transition-all duration-300 hover:scale-105"
-              style={{ background: `${project.color}25`, color: project.color, border: `1px solid ${project.color}40` }}
+              className="flex items-center gap-1.5 font-satoshi font-bold text-xs uppercase px-3 py-1.5 bg-[#DB4A2B] text-white hover:bg-white hover:text-[#1E1E1E] transition-colors"
             >
               {project.image ? (
                 <>
                   <GithubIcon className="w-3.5 h-3.5" />
-                  <span>View Project</span>
+                  <span>GitHub</span>
                 </>
               ) : (
                 <>
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Open Original</span>
+                  <span>Visit App</span>
                 </>
               )}
             </a>
+
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg glass flex items-center justify-center transition-all duration-200 cursor-pointer"
-              title="Close preview"
+              aria-label="Close modal"
+              className="p-1.5 border border-white/20 hover:bg-[#DB4A2B] hover:border-[#DB4A2B] text-white transition-colors cursor-pointer"
             >
-              <X className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Modal Main Content: Preserved Details for Unavailable projects, Expanded Image for image projects, Live Iframe for active projects */}
-        {isUnavailable ? (
-          <PreservedProjectDetailModal project={project} metadata={availability} />
-        ) : project.image ? (
-          <div className="relative flex-1 bg-[#0d0c0b] overflow-hidden flex items-center justify-center p-3 sm:p-6 select-none">
-            <div className="relative w-full h-full max-w-5xl flex items-center justify-center">
-              <img
-                src={project.image}
-                alt={`${project.title} full expanded preview`}
-                className="w-full h-full max-h-[82vh] object-contain rounded-xl"
-              />
+        {/* Modal Main Content Area: Split View on Desktop (Preview Left, Preserved Specs Right) */}
+        <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row">
+          {/* Left: Interactive Preview Frame */}
+          <div className="w-full lg:w-[60%] min-h-[380px] lg:min-h-full bg-[#1E1E1E] relative border-b lg:border-b-0 lg:border-r border-[#1E1E1E] flex flex-col">
+            {/* Screen Chrome */}
+            <div className="h-8 bg-[#2A2A2A] text-white/70 px-3 flex items-center justify-between text-[11px] font-mono shrink-0">
+              <span className="truncate">{project.link}</span>
+              <span className="font-bold text-[#DB4A2B]">// FULL PREVIEW</span>
             </div>
-          </div>
-        ) : (
-          <div className="relative flex-1 bg-white">
-            {!iframeLoaded && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center" style={{ background: 'var(--bg-base)' }}>
-                <div className="relative mb-4">
-                  <div
-                    className="w-12 h-12 rounded-full border-[3px] border-transparent animate-spin"
-                    style={{ borderTopColor: project.color, borderRightColor: `${project.color}40` }}
+
+            <div className="relative flex-1 w-full h-full min-h-[350px] bg-white">
+              {project.image ? (
+                <div className="w-full h-full bg-[#0d0c0b] flex items-center justify-center p-6">
+                  <img
+                    src={project.image}
+                    alt={`${project.title} Expanded View`}
+                    className="max-h-[65vh] w-auto object-contain"
                   />
                 </div>
-                <p className="text-sm font-medium font-space" style={{ color: 'var(--text-primary)' }}>Loading {project.title}...</p>
-                <p className="text-xs mt-1 font-mono" style={{ color: 'var(--text-tertiary)' }}>Connecting to site</p>
-              </div>
-            )}
+              ) : isUnavailable ? (
+                /* Unavailable Maintenance Detail inside modal */
+                <div className="w-full h-full bg-[#E4E2DD] p-8 flex flex-col justify-center">
+                  <div className="inline-flex items-center gap-2 text-amber-600 font-mono text-xs uppercase font-bold mb-3">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>{availability.statusLabel}</span>
+                  </div>
+                  <h4 className="font-clash text-2xl sm:text-3xl font-bold uppercase text-[#1E1E1E] mb-3">
+                    Scheduled Infrastructure Update
+                  </h4>
+                  <p className="font-satoshi text-sm text-[#444444] leading-relaxed mb-6">
+                    {availability.detailedMessage}
+                  </p>
+                  <div className="p-4 bg-[#D9D6D0] border border-[#1E1E1E] space-y-2 font-mono text-xs">
+                    <p><strong>REASON:</strong> {availability.reason}</p>
+                    <p><strong>ESTIMATED RETURN:</strong> {availability.estimatedReturn}</p>
+                    <p><strong>SERVICE:</strong> {availability.technicalSpecs.serviceName}</p>
+                  </div>
+                </div>
+              ) : (
+                /* Live Interactive Iframe */
+                <>
+                  {!iframeLoaded && (
+                    <div className="absolute inset-0 z-10 bg-[#E4E2DD] flex flex-col items-center justify-center p-4">
+                      <div className="w-10 h-10 border-2 border-transparent border-t-[#DB4A2B] rounded-full animate-spin mb-3" />
+                      <span className="font-clash font-bold text-sm uppercase tracking-wider text-[#1E1E1E]">
+                        Loading {project.title}...
+                      </span>
+                      <span className="font-mono text-xs text-[#666666] mt-1">Connecting to live deployment</span>
+                    </div>
+                  )}
 
-            <iframe
-              src={project.link}
-              title={`${project.title} full preview`}
-              className="w-full h-full border-none"
-              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-              onLoad={() => setIframeLoaded(true)}
-            />
+                  <iframe
+                    src={project.link}
+                    title={`${project.title} live interface`}
+                    className="w-full h-full min-h-[480px] border-none"
+                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                    onLoad={() => setIframeLoaded(true)}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* Right: Comprehensive Preserved Project Details & Architecture */}
+          <div className="w-full lg:w-[40%] p-6 sm:p-8 flex flex-col justify-between bg-[#E4E2DD]">
+            <div>
+              {/* Tag row */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-mono text-xs font-bold text-[#DB4A2B] uppercase tracking-wider">
+                  SYSTEM PROFILE // {project.number}
+                </span>
+                <span className="font-mono text-xs uppercase px-2 py-0.5 border border-[#1E1E1E]">
+                  {project.tags[0]}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h2 className="font-clash text-2xl sm:text-3xl font-bold uppercase tracking-[-0.04em] text-[#1E1E1E] mb-3">
+                {project.title}
+              </h2>
+
+              {/* Description */}
+              <p className="font-satoshi text-sm sm:text-base text-[#444444] leading-relaxed mb-6 font-medium">
+                {project.description}
+              </p>
+
+              {/* Technical Architecture Details */}
+              <div className="space-y-4 mb-6">
+                <div className="p-4 bg-[#D9D6D0] border border-[#1E1E1E]">
+                  <span className="font-satoshi text-xs font-bold uppercase tracking-wider text-[#1E1E1E] block mb-1">
+                    System Architecture & Objective
+                  </span>
+                  <p className="font-satoshi text-xs text-[#444444] leading-relaxed">
+                    Engineered with high performance in mind, minimizing network roundtrips and optimizing for edge responsiveness and fluid user interaction.
+                  </p>
+                </div>
+
+                {/* If Convo AI, show Interactive Capabilities Trigger */}
+                {project.id === 'project-convo' && (
+                  <div className="p-4 bg-[#8b5cf6]/10 border-2 border-[#8b5cf6] shadow-[3px_3px_0px_#1E1E1E]">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-mono text-xs font-bold text-[#8b5cf6] uppercase flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Convo AI Capabilities Guide</span>
+                      </span>
+                      <span className="font-mono text-[10px] px-2 py-0.5 bg-[#8b5cf6] text-white font-bold">
+                        28 Deep Features
+                      </span>
+                    </div>
+                    <p className="font-satoshi text-xs text-[#333333] mb-3 leading-relaxed">
+                      Hands-free voice, long-term memory, Think More deep reasoning, presence auto-lock, and Google Workspace integration.
+                    </p>
+                    <button
+                      onClick={() => setShowFeaturesModal(true)}
+                      className="w-full py-2 px-3 bg-[#8b5cf6] text-white font-mono text-xs font-bold uppercase tracking-wider hover:bg-[#1E1E1E] transition-colors cursor-pointer flex items-center justify-center gap-1.5 border border-[#8b5cf6]"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Explore 28 Features</span>
+                    </button>
+                  </div>
+                )}
+
+                {isUnavailable && (
+                  <div className="p-4 bg-amber-500/10 border border-amber-600/40 text-xs">
+                    <span className="font-mono font-bold text-amber-800 uppercase block mb-1">
+                      Migration Blueprint
+                    </span>
+                    <p className="font-satoshi text-amber-900 leading-relaxed">
+                      {availability.technicalSpecs.migrationDetails}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Tech Stack Chips */}
+              <div className="mb-6">
+                <span className="font-satoshi text-xs font-bold uppercase tracking-wider text-[#1E1E1E] block mb-2">
+                  Integrated Technologies
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {(isUnavailable ? availability.technicalSpecs.techStack : project.tags).map((tech) => (
+                    <span
+                      key={tech}
+                      className="font-mono text-xs px-2.5 py-1 bg-white border border-[#1E1E1E] text-[#1E1E1E] font-medium"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Actions inside Modal */}
+            <div className="pt-6 border-t border-[#1E1E1E]/20 flex flex-col sm:flex-row gap-3">
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-raw flex-1 text-center justify-center"
+              >
+                <span>{project.image ? 'View Source Code' : 'Open Production App'}</span>
+                <ArrowUpRight className="w-4 h-4 ml-1" />
+              </a>
+
+              <button
+                onClick={onClose}
+                className="py-3 px-5 border border-[#1E1E1E] font-satoshi font-bold text-xs uppercase tracking-wider hover:bg-[#1E1E1E] hover:text-white transition-colors cursor-pointer text-center"
+              >
+                Close View
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Convo AI Interactive Features Modal */}
+        <ConvoFeaturesModal
+          isOpen={showFeaturesModal}
+          onClose={() => setShowFeaturesModal(false)}
+        />
       </motion.div>
     </motion.div>
   );

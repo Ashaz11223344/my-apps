@@ -1,44 +1,39 @@
 /* ═══════════════════════════════════════════════════════════════
-   AUTH PAGE — Etheric Void Design System (Stitch MCP)
-   Creative North Star: "The Ethereal Architect"
+   AUTH PAGE — RAW FORM BRUTALIST POSTER DESIGN SYSTEM
+   Anchored by #E4E2DD (Base), #1E1E1E (Primary), #DB4A2B (Accent Red)
+   Reference: new-design.md
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Design Tokens ── */
 :root {
-  --bg:                        #0A0A0F;
-  --surface:                   #131318;
-  --surface-container-lowest:  #0e0e13;
-  --surface-container-low:     #1b1b20;
-  --surface-container:         #1f1f25;
-  --surface-container-high:    #2a292f;
-  --surface-container-highest: #35343a;
+  --bg-base: #E4E2DD;
+  --bg-card: #ECEAE5;
+  --bg-inset: #DAD7D0;
+  --bg-primary: #1E1E1E;
 
-  --primary:             #d0bcff;
-  --primary-container:   #a078ff;
-  --primary-dim:         #8B5CF6;
-  --secondary:           #4cd7f6;
-  --secondary-container: #03b5d3;
-  --tertiary:            #ccbeff;
+  --text-primary: #1E1E1E;
+  --text-secondary: #444444;
+  --text-tertiary: #666666;
+  --text-inverse: #E4E2DD;
 
-  --on-surface:          #e4e1e9;
-  --on-surface-variant:  #cbc3d7;
-  --outline:             #958ea0;
-  --outline-variant:     #494454;
+  --accent-red: #DB4A2B;
+  --accent-orange: #F8A348;
+  --accent-pink: #FF89A9;
 
-  --error:               #ff6e84;
+  --font-heading: 'Clash Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  --font-headline: 'Space Grotesk', sans-serif;
-  --font-body:     'Inter', sans-serif;
+  --border-raw: 2px solid #1E1E1E;
+  --border-raw-light: 1px solid rgba(30, 30, 30, 0.15);
+  --shadow-raw: 6px 6px 0px #1E1E1E;
+  --shadow-hover: 8px 8px 0px #DB4A2B;
 
-  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
+  --ease-raw: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-raw: 0.8s;
 }
 
-/* ── Reset ── */
+/* ── Reset & Global ── */
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -47,334 +42,428 @@
 
 html, body {
   height: 100%;
-}
-
-body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
   font-family: var(--font-body);
-  background-color: var(--bg);
-  color: var(--on-surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ═══════════════ AMBIENT BACKGROUND ═══════════════ */
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+/* ── Selection Color ── */
+::selection {
+  background-color: var(--accent-red);
+  color: #FFFFFF;
+}
+::-moz-selection {
+  background-color: var(--accent-red);
+  color: #FFFFFF;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-red);
+  border-radius: 0px;
+}
+
+/* ═══════════════ ANIMATED GRADIENT BLOBS ═══════════════ */
+/* Spec: Soft organic shapes that provide depth behind text.
+   Position absolute divs with width: 60vw; height: 60vw;.
+   Colors: #DB4A2B and #F8A348. Apply filter: blur(140px) and mix-blend-mode: multiply.
+   Animate using a slow pulse (opacity 0.6 to 0.9) and slight translation over 10-15 seconds. */
+
 .ambient-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  background-color: var(--bg-base);
 }
 
-.orb {
+.blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.18;
-  animation: orbFloat 20s ease-in-out infinite;
+  filter: blur(140px);
+  mix-blend-mode: multiply;
+  opacity: 0.7;
+  animation: blobMotion 14s ease-in-out infinite alternate;
 }
 
-.orb-violet {
-  width: 500px;
-  height: 500px;
-  background: var(--primary-dim);
-  top: -80px;
-  right: -120px;
-  animation-delay: 0s;
+.blob-1 {
+  width: 60vw;
+  height: 60vw;
+  max-width: 650px;
+  max-height: 650px;
+  background-color: var(--accent-red);
+  top: -15%;
+  left: -10%;
+  animation-duration: 13s;
 }
 
-.orb-cyan {
-  width: 400px;
-  height: 400px;
-  background: var(--secondary-container);
-  bottom: -60px;
-  left: -100px;
-  animation-delay: -10s;
-  animation-duration: 25s;
+.blob-2 {
+  width: 55vw;
+  height: 55vw;
+  max-width: 600px;
+  max-height: 600px;
+  background-color: var(--accent-orange);
+  bottom: -15%;
+  right: -10%;
+  animation-delay: -5s;
+  animation-duration: 16s;
 }
 
-@keyframes orbFloat {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25%      { transform: translate(30px, -40px) scale(1.08); }
-  50%      { transform: translate(-20px, 30px) scale(0.95); }
-  75%      { transform: translate(40px, 10px) scale(1.03); }
+.blob-3 {
+  width: 45vw;
+  height: 45vw;
+  max-width: 480px;
+  max-height: 480px;
+  background-color: var(--accent-pink);
+  top: 40%;
+  left: 55%;
+  opacity: 0.45;
+  animation-delay: -8s;
+  animation-duration: 18s;
 }
 
-/* ═══════════════ AUTH CONTAINER (Glass Card) ═══════════════ */
+@keyframes blobMotion {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(30px, -25px) scale(1.08);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(-25px, 30px) scale(0.95);
+    opacity: 0.65;
+  }
+}
+
+/* ═══════════════ RAW FORM BRUTALIST POSTER CONTAINER ═══════════════ */
+/* Spec: Implement a slide-up entrance for all elements using cubic-bezier(0.16, 1, 0.3, 1) over 0.8s */
+
 .auth-container {
   position: relative;
-  z-index: 1;
-  width: 90%;
-  max-width: 420px;
-  padding: 48px 40px 40px;
-  text-align: center;
-
-  /* Glassmorphism */
-  background: rgba(31, 31, 37, 0.5);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: var(--radius-xl);
-
-  /* Ghost Border */
-  box-shadow: inset 0 0 0 1px rgba(73, 68, 84, 0.15);
-
-  /* Ambient shadow */
-  filter: drop-shadow(0 32px 64px rgba(139, 92, 246, 0.06));
-
-  /* Entrance animation */
-  animation: cardEntrance 0.8s var(--ease-out-expo) both;
+  z-index: 10;
+  width: 100%;
+  max-width: 460px;
+  padding: 44px 36px 36px;
+  background: var(--bg-card);
+  border: var(--border-raw);
+  box-shadow: var(--shadow-raw);
+  text-align: left;
+  animation: posterSlideUp var(--duration-raw) var(--ease-raw) both;
 }
 
-.auth-container.exit {
-  animation: cardExit 0.5s var(--ease-out-expo) forwards;
-}
-
-@keyframes cardEntrance {
+@keyframes posterSlideUp {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.96);
+    transform: translateY(35px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-@keyframes cardExit {
-  to {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-    filter: blur(8px);
-  }
+/* ═══════════════ META HEADER BAR ═══════════════ */
+.auth-meta-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: var(--border-raw-light);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-/* ═══════════════ LOCK ICON ═══════════════ */
-.lock-icon {
+.meta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-red);
+}
+
+.meta-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-red);
+  display: inline-block;
+}
+
+.meta-code {
+  color: var(--text-tertiary);
+}
+
+/* ═══════════════ LOCK ICON BADGE ═══════════════ */
+.lock-icon-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-lg);
-  background: rgba(160, 120, 255, 0.08);
-  color: var(--primary);
-  margin-bottom: 24px;
-  animation: iconPulse 3s ease-in-out infinite;
+  width: 48px;
+  height: 48px;
+  background-color: #FFFFFF;
+  border: var(--border-raw);
+  box-shadow: 3px 3px 0px #1E1E1E;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  transition: transform 0.2s var(--ease-raw), box-shadow 0.2s var(--ease-raw);
 }
 
-@keyframes iconPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(160, 120, 255, 0.15); }
-  50%      { box-shadow: 0 0 0 12px rgba(160, 120, 255, 0); }
+.auth-container:hover .lock-icon-box {
+  box-shadow: 4px 4px 0px var(--accent-red);
 }
 
 /* ═══════════════ TYPOGRAPHY ═══════════════ */
-.auth-label {
-  font-family: var(--font-headline);
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--outline);
-  margin-bottom: 16px;
-}
+/* Spec: Clash Display for headings (700 weight, tight tracking -0.05em, leading 0.75-0.85) */
 
 .auth-title {
-  font-family: var(--font-headline);
-  font-size: clamp(1.5rem, 4vw, 1.8rem);
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 7vw, 2.75rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin-bottom: 12px;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 14px;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, var(--primary-container), var(--secondary-container));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.highlight-text {
+  color: var(--accent-red);
 }
 
 .auth-subtitle {
-  font-size: 0.9rem;
-  color: var(--on-surface-variant);
-  line-height: 1.7;
-  margin-bottom: 32px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 28px;
 }
 
 /* ═══════════════ PASSCODE INPUT ═══════════════ */
+.input-section {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.input-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.input-label {
+  color: var(--text-primary);
+}
+
+.input-status {
+  color: var(--accent-red);
+  font-size: 10px;
+}
+
 .input-wrapper {
   position: relative;
-  margin-bottom: 8px;
+  width: 100%;
 }
 
 #passcode {
   width: 100%;
   padding: 16px 20px;
-  font-family: var(--font-headline);
-  font-size: 1.6rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 700;
   text-align: center;
-  letter-spacing: 0.7rem;
-  border: none;
-  border-radius: var(--radius-md);
+  letter-spacing: 0.9rem;
+  color: var(--text-primary);
+  background-color: #FFFFFF;
+  border: var(--border-raw);
+  border-radius: 0px;
+  box-shadow: 4px 4px 0px #1E1E1E;
   outline: none;
-  color: var(--on-surface);
-
-  /* Tonal layering */
-  background: var(--surface-container-lowest);
-
-  /* Ghost border */
-  box-shadow: inset 0 0 0 1px rgba(73, 68, 84, 0.15);
-  transition: box-shadow 0.4s var(--ease-out-expo),
-              background 0.4s var(--ease-out-expo);
+  transition: transform 0.2s var(--ease-raw),
+              box-shadow 0.2s var(--ease-raw),
+              border-color 0.2s var(--ease-raw),
+              background-color 0.2s var(--ease-raw);
 }
 
 #passcode::placeholder {
-  color: var(--outline-variant);
+  color: #AAAAAA;
   letter-spacing: 0.6rem;
   font-size: 1.2rem;
 }
 
 #passcode:focus {
-  background: var(--surface-container-high);
-  box-shadow:
-    inset 0 0 0 1.5px rgba(160, 120, 255, 0.35),
-    0 0 24px rgba(139, 92, 246, 0.08);
+  transform: translate(-1px, -1px);
+  border-color: #1E1E1E;
+  box-shadow: 6px 6px 0px var(--accent-red);
 }
 
-/* Input bottom glow line */
-.input-glow {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0%;
-  height: 2px;
-  background: linear-gradient(90deg, var(--primary-container), var(--secondary-container));
-  border-radius: 2px;
-  transition: width 0.5s var(--ease-out-expo);
-}
-
-#passcode:focus ~ .input-glow {
-  width: 60%;
-}
-
-/* Success state */
+/* Input success state */
 #passcode.correct {
-  box-shadow:
-    inset 0 0 0 1.5px rgba(76, 215, 246, 0.4),
-    0 0 32px rgba(76, 215, 246, 0.12);
+  border-color: #1E1E1E;
+  background-color: #F4FAF5;
+  box-shadow: 6px 6px 0px #1E1E1E;
 }
 
-#passcode.correct ~ .input-glow {
-  width: 100%;
-  background: linear-gradient(90deg, var(--secondary-container), var(--secondary));
-}
-
-/* Error shake */
+/* Input shake on error */
 #passcode.shake {
-  animation: shake 0.45s ease;
+  animation: brutalistShake 0.45s ease;
+  border-color: var(--accent-red);
+  background-color: #FFF6F4;
+  box-shadow: 6px 6px 0px var(--accent-red);
 }
 
-#passcode.error-flash {
-  box-shadow:
-    inset 0 0 0 1.5px rgba(255, 110, 132, 0.4),
-    0 0 20px rgba(255, 110, 132, 0.1);
+@keyframes brutalistShake {
+  0%, 100% { transform: translate(0, 0); }
+  20%      { transform: translate(-6px, 0); }
+  40%      { transform: translate(6px, 0); }
+  60%      { transform: translate(-4px, 0); }
+  80%      { transform: translate(4px, 0); }
 }
 
-@keyframes shake {
-  0%   { transform: translateX(0); }
-  20%  { transform: translateX(-8px); }
-  40%  { transform: translateX(8px); }
-  60%  { transform: translateX(-5px); }
-  80%  { transform: translateX(5px); }
-  100% { transform: translateX(0); }
+/* ═══════════════ INTERACTIVE CTA BUTTON ═══════════════ */
+/* Spec from new-design.md:
+   A high-contrast button with a directional fill animation.
+   Rectangular button, no border-radius. Background #1E1E1E, text #E4E2DD.
+   On hover, a white background (#FFFFFF) slides from left-to-right (transform -100% to 0) behind the text.
+   Text color transitions to #DB4A2B on hover.
+   Duration: 0.3s ease-out. */
+
+.cta-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  margin-top: 18px;
+  background-color: var(--bg-primary);
+  border: var(--border-raw);
+  border-radius: 0px;
+  box-shadow: 4px 4px 0px #1E1E1E;
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s var(--ease-raw),
+              box-shadow 0.2s var(--ease-raw);
 }
 
-/* ═══════════════ BUTTONS ═══════════════ */
+.cta-button .btn-slide-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #FFFFFF;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
 
-/* Primary — Gradient CTA */
-.btn-primary {
+.cta-button:hover .btn-slide-bg {
+  transform: translateX(0);
+}
+
+.cta-button .btn-content {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-inverse);
+  transition: color 0.3s ease-out;
+}
+
+.cta-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0px var(--accent-red);
+}
+
+.cta-button:hover .btn-content {
+  color: var(--accent-red);
+}
+
+.cta-button svg {
+  transition: transform 0.3s var(--ease-raw);
+}
+
+.cta-button:hover svg {
+  transform: translateX(4px);
+}
+
+.cta-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0px #1E1E1E;
+}
+
+/* ═══════════════ SECONDARY GHOST / BACK BUTTON ═══════════════ */
+.btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 14px 24px;
-  margin-top: 20px;
-  border: none;
-  border-radius: var(--radius-full);
-  font-family: var(--font-headline);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #fff;
-  cursor: pointer;
-  background: linear-gradient(135deg, var(--primary-container), var(--secondary-container));
-  transition: transform 0.3s var(--ease-out-expo),
-              box-shadow 0.3s var(--ease-out-expo),
-              filter 0.3s var(--ease-out-expo);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.25);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-primary:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 3px;
-}
-
-.btn-primary svg {
-  transition: transform 0.3s var(--ease-out-expo);
-}
-
-.btn-primary:hover svg {
-  transform: translateX(3px);
-}
-
-/* Ghost — Back button */
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 12px 24px;
-  margin-top: 10px;
-  border: none;
-  border-radius: var(--radius-full);
-  font-family: var(--font-headline);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--on-surface-variant);
-  cursor: pointer;
+  padding: 12px 20px;
+  margin-top: 12px;
   background: transparent;
-  transition: color 0.3s var(--ease-out-expo),
-              background 0.3s var(--ease-out-expo);
+  color: var(--text-primary);
+  border: 1px solid rgba(30, 30, 30, 0.3);
+  border-radius: 0px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease-raw),
+              color 0.2s var(--ease-raw),
+              border-color 0.2s var(--ease-raw),
+              box-shadow 0.2s var(--ease-raw);
 }
 
 .btn-ghost:hover {
-  color: var(--on-surface);
-  background: rgba(208, 188, 255, 0.06);
-}
-
-.btn-ghost:focus-visible {
-  outline: 2px solid var(--outline-variant);
-  outline-offset: 2px;
+  background-color: var(--bg-primary);
+  color: var(--text-inverse);
+  border-color: var(--bg-primary);
+  box-shadow: 4px 4px 0px var(--accent-red);
 }
 
 .btn-ghost svg {
-  transition: transform 0.3s var(--ease-out-expo);
+  transition: transform 0.2s var(--ease-raw);
 }
 
 .btn-ghost:hover svg {
@@ -384,53 +473,70 @@ body {
 /* ═══════════════ STATUS MESSAGE ═══════════════ */
 .status-message {
   margin-top: 16px;
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--on-surface-variant);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.5s var(--ease-out-expo),
-              transform 0.5s var(--ease-out-expo),
-              color 0.3s ease;
+  transform: translateY(6px);
+  transition: opacity 0.3s var(--ease-raw), transform 0.3s var(--ease-raw);
 }
 
 .status-message.success {
   opacity: 1;
   transform: translateY(0);
-  color: var(--secondary);
+  color: var(--text-primary);
 }
 
 .status-message.error {
   opacity: 1;
   transform: translateY(0);
-  color: var(--error);
+  color: var(--accent-red);
+}
+
+/* ═══════════════ FOOTER META ON CARD ═══════════════ */
+.auth-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 18px;
+  margin-top: 24px;
+  border-top: var(--border-raw-light);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
 }
 
 /* ═══════════════ RESPONSIVE ═══════════════ */
 @media (max-width: 480px) {
   .auth-container {
-    padding: 40px 24px 32px;
-    border-radius: var(--radius-lg);
+    padding: 32px 22px 24px;
+    box-shadow: 5px 5px 0px #1E1E1E;
   }
 
   .auth-title {
-    font-size: 1.4rem;
+    font-size: 2rem;
   }
 
   #passcode {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     padding: 14px 16px;
+    letter-spacing: 0.6rem;
   }
 
-  .lock-icon {
-    width: 56px;
-    height: 56px;
+  .cta-button {
+    padding: 14px 20px;
   }
 
-  .lock-icon svg {
-    width: 26px;
-    height: 26px;
+  .auth-card-footer {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
   }
 }
 
@@ -441,7 +547,7 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .orb {
+  .blob {
     animation: none;
   }
 }

@@ -12,6 +12,20 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Temporary / Scratch files
+test.js
+lol.txt
+*.tmp
+*.bak
+*_preview.png
+auth_new_design.png
+model-banner/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

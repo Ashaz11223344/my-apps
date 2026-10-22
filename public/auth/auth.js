@@ -1,7 +1,4 @@
-// 🔐 EASY TO CHANGE PASSCODE
-const PASSCODE = "2008";
-
-// 🎯 RICKROLL LINK
+// 🎯 RICKROLL LINK FALLBACK
 const FAIL_REDIRECT = "https://youtu.be/iik25wqIuFo?list=RDiik25wqIuFo";
 
 const form = document.getElementById("authForm");
@@ -9,6 +6,7 @@ const input = document.getElementById("passcode");
 const button = document.getElementById("verifyBtn");
 const message = document.getElementById("message");
 const container = document.getElementById("authContainer");
+const statusEl = document.getElementById("inputStatus");
 
 // 1. SAFELY ADD SUBMIT LISTENER (NEW HTML FORM APPROACH)
 if (form) {
@@ -40,64 +38,110 @@ if (input) {
   });
 }
 
-function verify() {
-  if (!input) return;
+let isVerifying = false;
+
+async function verify() {
+  if (!input || isVerifying) return;
+
+  const enteredValue = input.value.trim();
+  if (!enteredValue) return;
+
+  isVerifying = true;
+  if (button) button.disabled = true;
 
   // Reset previous error styles and ensure message is visible
   if (message) {
     message.style.opacity = "1";
     message.classList.remove("success", "error");
+    message.textContent = "Verifying authorization...";
+  }
+  if (statusEl) {
+    statusEl.textContent = "[VERIFYING...]";
+    statusEl.style.color = "#1E1E1E";
   }
   input.classList.remove("shake", "error-flash", "correct");
 
-  const enteredValue = input.value.trim();
+  try {
+    const response = await fetch("/api/verify-passcode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ passcode: enteredValue }),
+    });
 
-  if (enteredValue === PASSCODE) {
-    // Success
-    input.classList.add("correct");
+    const data = await response.json().catch(() => ({}));
 
-    if (message) {
-      message.textContent = "Welcome — You are Trusted by Ashaz ✨";
-      message.classList.add("success");
-    }
+    if (response.ok && data.success) {
+      // Success
+      input.classList.add("correct");
 
-    // Disable input and button
-    input.disabled = true;
-    if (button) button.disabled = true;
-
-    // Instant redirect to guarantee compatibility on all desktop and mobile browsers
-    try {
-      window.location.replace("https://tomylovesmiti.qzz.io");
-    } catch (err) {
-      window.location.href = "https://tomylovesmiti.qzz.io";
-    }
-  } else {
-    // Error
-    input.classList.add("shake");
-    input.classList.add("error-flash");
-
-    if (message) {
-      message.textContent = "Access denied — wrong passcode";
-      message.classList.add("error");
-    }
-
-    setTimeout(() => {
-      input.classList.remove("shake");
-    }, 450);
-
-    setTimeout(() => {
-      input.classList.remove("error-flash");
-      if (message) {
-        message.classList.remove("error");
-        message.style.opacity = "0";
+      if (statusEl) {
+        statusEl.textContent = "[ACCESS GRANTED]";
+        statusEl.style.color = "#1E1E1E";
       }
-    }, 600);
 
-    // Short delayed fallback for failure, ensuring synchronous fallback if needed
-    try {
-      window.location.replace(FAIL_REDIRECT);
-    } catch (err) {
-      window.location.href = FAIL_REDIRECT;
+      if (message) {
+        message.textContent = data.message || "Welcome — You are Trusted by Ashaz ✨";
+        message.classList.add("success");
+      }
+
+      // Disable input and button
+      input.disabled = true;
+      if (button) button.disabled = true;
+
+      // Instant redirect to guarantee compatibility on all desktop and mobile browsers
+      const targetUrl = data.redirectUrl || "https://tomylovesmiti.qzz.io";
+      try {
+        window.location.replace(targetUrl);
+      } catch (err) {
+        window.location.href = targetUrl;
+      }
+    } else {
+      handleFailure(data.redirectUrl || FAIL_REDIRECT, data.message || "Access denied — wrong passcode");
     }
+  } catch (err) {
+    handleFailure(FAIL_REDIRECT, "Access denied — wrong passcode");
+  } finally {
+    isVerifying = false;
+  }
+}
+
+function handleFailure(redirectUrl, errorMsg) {
+  input.classList.add("shake");
+  input.classList.add("error-flash");
+
+  if (statusEl) {
+    statusEl.textContent = "[ACCESS DENIED]";
+    statusEl.style.color = "#DB4A2B";
+  }
+
+  if (message) {
+    message.textContent = errorMsg;
+    message.classList.add("error");
+  }
+
+  setTimeout(() => {
+    input.classList.remove("shake");
+  }, 450);
+
+  setTimeout(() => {
+    input.classList.remove("error-flash");
+    if (message) {
+      message.classList.remove("error");
+      message.style.opacity = "0";
+    }
+    if (statusEl) {
+      statusEl.textContent = "[ENCRYPTED GATEWAY]";
+      statusEl.style.color = "#DB4A2B";
+    }
+    if (button) button.disabled = false;
+  }, 600);
+
+  // Short delayed fallback for failure, ensuring synchronous fallback if needed
+  try {
+    window.location.replace(redirectUrl);
+  } catch (err) {
+    window.location.href = redirectUrl;
   }
 }

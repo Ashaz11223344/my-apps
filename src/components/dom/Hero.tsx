@@ -1,140 +1,144 @@
 import { motion } from 'framer-motion';
-import { ArrowDown, FileText, HelpCircle, Mail, MapPin } from 'lucide-react';
+import { ArrowDown, MapPin, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 export default function Hero() {
   return (
-    <section id="hero" className="min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-24 relative pt-28 pb-16">
-      <div className="max-w-4xl z-10 pointer-events-auto">
-        {/* Label with Target Keywords */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-xs sm:text-sm md:text-base tracking-[0.2em] text-accent-primary font-space uppercase mb-3 sm:mb-4 flex items-center gap-2 flex-wrap"
-        >
-          <span>Ashaz Apps</span>
-          <span>•</span>
-          <span>Ashaz Pathan Portfolio</span>
-          <span>•</span>
-          <span className="inline-flex items-center gap-1 text-accent-primary font-semibold">
-            <MapPin className="w-3.5 h-3.5 inline" /> Nashik, India
-          </span>
-        </motion.p>
+    <section
+      id="hero"
+      className="relative min-h-screen w-full flex flex-col justify-between pt-28 sm:pt-36 pb-12 sm:pb-16 px-4 sm:px-8 md:px-16 lg:px-24 overflow-hidden select-none bg-transparent"
+      style={{ color: '#1E1E1E' }}
+    >
 
-        {/* H1 Title Aligned with Meta Title for SEO & Keyword Targeting */}
+      {/* Top Metadata Strip */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-[#1E1E1E]/20 pb-4 text-xs font-satoshi font-bold uppercase tracking-[0.15em] text-[#444444]"
+      >
+        <div className="flex items-center gap-3">
+          <span className="w-2 h-2 bg-[#DB4A2B]" />
+          <span>ASHAZ APPS &bull; PORTFOLIO 2026</span>
+        </div>
+
+        <div className="flex items-center gap-2 text-[#DB4A2B]">
+          <MapPin className="w-3.5 h-3.5" />
+          <span>NASHIK, MAHARASHTRA, INDIA</span>
+        </div>
+
+        <div className="hidden lg:block font-mono text-[11px] text-[#666666]">
+          [1ST PLACE MAHA-VEER 2026 WINNER]
+        </div>
+      </motion.div>
+
+      {/* Hero Massive Typography: 'Clash Display', 18vw size, uppercase, line-height 0.75, 2nd line indented 15vw */}
+      <div className="relative z-10 my-auto py-6 sm:py-8">
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4, type: "spring", stiffness: 50 }}
-          className="text-3xl sm:text-5xl md:text-7xl font-space font-bold leading-[1.1] sm:leading-tight tracking-tighter mb-4 sm:mb-6"
-          style={{ color: 'var(--text-primary)' }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col font-clash uppercase font-bold text-[#1E1E1E] tracking-[-0.05em] leading-[0.75]"
+          style={{
+            fontSize: 'clamp(3.8rem, 16vw, 18vw)',
+          }}
         >
-          <span className="gradient-text uppercase">Ashaz Pathan</span><br />
-          <span className="text-xl sm:text-3xl md:text-4xl font-normal block mt-2" style={{ color: 'var(--text-secondary)' }}>
-            Computer Engineer & Full-Stack AI Developer
+          {/* First Line */}
+          <span className="block transform hover:translate-x-2 transition-transform duration-300">
+            ASHAZ
           </span>
+
+          {/* Second Line Indented 15vw */}
+          <span
+            className="block pl-[10vw] sm:pl-[15vw] text-[#1E1E1E] transform hover:translate-x-2 transition-transform duration-300"
+          >
+            PATHAN
+          </span>
+          <span className="sr-only"> — Full-Stack AI Developer & Software Engineer</span>
         </motion.h1>
-
-        {/* Executive Summary & Definition Paragraph for AEO, GEO & Target Keywords */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-base sm:text-lg md:text-xl font-inter max-w-2xl mb-6 leading-relaxed"
-          style={{ color: 'var(--text-secondary)' }}
-        >
-          Welcome to the official <strong>Ashaz Pathan website</strong> and <strong>Ashaz Apps</strong> showcase. I am a Computer Engineer based in <strong>Nashik, India</strong> specializing in full-stack web development, 3D interactive interfaces (Three.js), and intelligent AI software.
-        </motion.p>
-
-        {/* Top Summary Box (AEO Direct Answer Signal with Keywords) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="glass p-4 sm:p-5 rounded-2xl mb-8 max-w-2xl border-l-4 border-accent-primary"
-        >
-          <p className="text-xs font-space font-bold uppercase tracking-wider text-accent-primary mb-1">
-            Ashaz Pathan Profile & Core Expertise
-          </p>
-          <p className="text-xs sm:text-sm font-inter leading-normal" style={{ color: 'var(--text-primary)' }}>
-            <strong>Location:</strong> Nashik, Maharashtra, India. <strong>Education:</strong> MET Bhujbal Knowledge City (Computer Engineering). <strong>Specialization:</strong> React, TypeScript, Python AI/ML, Three.js 3D Web Apps, and Ashaz Apps development. 1st Place Winner at <strong>MAHA-VEER 2026</strong>.
-          </p>
-        </motion.div>
-
-        {/* Internal Action Links */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="flex flex-wrap items-center gap-3"
-        >
-          <a
-            href="#projects"
-            className="group inline-flex items-center gap-2 px-6 py-3.5 glass rounded-full transition-all duration-300 font-medium hover:scale-105 text-sm"
-            style={{ borderRadius: '9999px', color: 'var(--text-primary)' }}
-          >
-            <span>Explore Ashaz Apps & Projects</span>
-            <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform text-accent-primary" />
-          </a>
-
-          <Link
-            to="/myresume"
-            className="group inline-flex items-center gap-2 px-6 py-3.5 glass rounded-full transition-all duration-300 font-medium hover:scale-105 text-sm"
-            style={{ borderRadius: '9999px', color: 'var(--text-primary)' }}
-          >
-            <FileText className="w-4 h-4 text-accent-primary" />
-            <span>Interactive Resume</span>
-          </Link>
-
-          <a
-            href="#faq"
-            className="group inline-flex items-center gap-2 px-6 py-3.5 glass rounded-full transition-all duration-300 font-medium hover:scale-105 text-sm"
-            style={{ borderRadius: '9999px', color: 'var(--text-primary)' }}
-          >
-            <HelpCircle className="w-4 h-4 text-accent-primary" />
-            <span>FAQ & Services</span>
-          </a>
-
-          <a
-            href="#contact"
-            className="group inline-flex items-center gap-2 px-6 py-3.5 glass rounded-full transition-all duration-300 font-medium hover:scale-105 text-sm"
-            style={{ borderRadius: '9999px', color: 'var(--text-primary)' }}
-          >
-            <Mail className="w-4 h-4 text-accent-primary" />
-            <span>Get In Touch</span>
-          </a>
-        </motion.div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* AEO / GEO Direct Answer & Executive Summary Block */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 1 }}
-        className="absolute bottom-4 sm:bottom-8 left-4 sm:left-6 md:left-24 flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] font-space"
-        style={{ color: 'var(--text-tertiary)' }}
+        transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 my-4 p-5 sm:p-6 bg-[#D9D6D0] border-2 border-[#1E1E1E] shadow-[4px_4px_0px_#1E1E1E]"
       >
-        <div
-          className="w-[1px] h-8 sm:h-12 relative overflow-hidden"
-          style={{ background: 'var(--glass-border)' }}
-        >
-          <motion.div
-            animate={{
-              y: ["-100%", "100%"]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute top-0 left-0 w-full h-1/2"
-            style={{
-              background: `linear-gradient(to bottom, transparent, var(--accent-primary), transparent)`
-            }}
-          />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 mb-3 border-b border-[#1E1E1E]/20">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-[#DB4A2B]" />
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#1E1E1E]">
+              EXECUTIVE SUMMARY // AT A GLANCE
+            </span>
+          </div>
+          <span className="font-mono text-[11px] text-[#555555]">
+            PRIMARY ENTITY: ASHAZ PATHAN (ASHAZ APPS)
+          </span>
         </div>
-        <span>Scroll to explore portfolio</span>
+
+        <p className="font-satoshi text-sm sm:text-base text-[#1E1E1E] leading-relaxed mb-4">
+          <strong>Ashaz Pathan</strong> is a Computer Science and Engineering student at G H Raisoni College of Engineering and Management (Nagpur) and a <strong>Full-Stack AI Developer</strong>. He specializes in training custom on-device Small Language Models (SLMs) such as <em>Vesper 1.5B</em> and <em>Obsidian 3B</em>, building privacy-first desktop systems, and engineering responsive React and Three.js applications.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-xs text-[#222222]">
+          <div className="p-3 bg-white border border-[#1E1E1E]">
+            <span className="font-bold text-[#DB4A2B] block mb-1">TARGET AUDIENCE:</span>
+            <span>Founders, tech leads & engineers seeking zero-latency private AI and scalable web apps.</span>
+          </div>
+          <div className="p-3 bg-white border border-[#1E1E1E]">
+            <span className="font-bold text-[#DB4A2B] block mb-1">WHEN TO USE:</span>
+            <span>When migrating from costly cloud API tokens to offline edge SLMs or building React software.</span>
+          </div>
+          <div className="p-3 bg-white border border-[#1E1E1E]">
+            <span className="font-bold text-[#DB4A2B] block mb-1">KEY CAPABILITIES:</span>
+            <span>4-bit SLM fine-tuning, CUDA computing, React/TypeScript frontends, and biometric tools.</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Bottom Row: Subtext (Max-width 400px, 20px font size) + CTAs */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-6 border-t border-[#1E1E1E]/20"
+      >
+        {/* Subtext: Max-width 400px, 20px font size in Satoshi */}
+        <div className="max-w-[420px]">
+          <p className="font-satoshi text-base sm:text-[19px] leading-snug font-medium text-[#444444]">
+            Computer Engineer & Full-Stack AI Developer building high-contrast digital architectures, autonomous OS tools, and tactile spatial interfaces.
+          </p>
+          <div className="mt-3 flex items-center gap-3 font-mono text-[11px] text-[#666666]">
+            <span>GHRCEM NAGPUR</span>
+            <span>&bull;</span>
+            <span>13+ LIVE APPS</span>
+            <span>&bull;</span>
+            <span className="text-[#DB4A2B] font-bold">READY TO DEPLOY</span>
+          </div>
+        </div>
+
+        {/* CTAs with Supporting Internal Links */}
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <a href="#projects" className="btn-raw">
+            <span>Explore Work</span>
+            <ArrowDown className="w-4 h-4 ml-1" />
+          </a>
+
+          <Link to="/myresume" className="raw-link">
+            <span>Interactive 3D Resume</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <Link to="/resume" className="raw-link">
+            <span>Technical CV</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <Link to="/credentials" className="raw-link">
+            <span>Verified Credentials</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </motion.div>
     </section>
   );
